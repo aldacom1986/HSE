@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cotización - Home Support Electric</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        body {
+            background-color: #f5f7fa;
+            padding: 20px;
+            color: #333;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            background: white;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .header {
+            display: flex;
+            align-items: center;
+            padding: 25px;
+            background: linear-gradient(135deg, #1a3a8f 0%, #2d5aa0 100%);
+            color: white;
+        }
+        .logo-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 180px;
+            height: 180px;
+            background: white;
+            border-radius: 50%;
+            margin-right: 25px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+        .logo {
+            text-align: center;
+            font-weight: bold;
+            color: #1a3a8f;
+            font-size: 22px;
+            line-height: 1.2;
+        }
+        .company-info {
+            flex: 1;
+        }
+        .company-name {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 5px;
+            letter-spacing: 1px;
+        }
+        .company-tagline {
+            font-size: 18px;
+            opacity: 0.9;
+            margin-bottom: 15px;
+        }
+        .document-title {
+            font-size: 28px;
+            font-weight: 700;
+            text-align: center;
+            padding: 20px;
+            background-color: #f0f4fc;
+            border-bottom: 2px solid #1a3a8f;
+        }
+        .document-number {
+            text-align: right;
+            padding: 15px 25px;
+            background-color: #f8f9fa;
+            border-bottom: 1px solid #e0e0e0;
+            font-size: 18px;
+            font-weight: 600;
+        }
+        .info-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            padding: 25px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #1a3a8f;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+        .info-item {
+            margin-bottom: 12px;
+        }
+        .info-label {
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #555;
+        }
+        .fixed-info {
+            padding: 8px 0;
+            color: #444;
+        }
+        input[type="text"], input[type="email"], input[type="tel"], input[type="date"], textarea {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #d0d0d0;
+            border-radius: 4px;
+            font-size: 15px;
+            transition: border 0.3s;
+        }
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: #1a3a8f;
+            box-shadow: 0 0 0 2px rgba(26, 58, 143, 0.2);
+        }
+        .products-section {
+            padding: 25px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+        th {
+            background-color: #1a3a8f;
+            color: white;
+            text-align: left;
+            padding: 12px 15px;
+            font-weight: 600;
+        }
+        td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #e0e0e0;
+            vertical-align: top;
+        }
+        tbody tr:hover {
+            background-color: #f8f9fa;
+        }
+        input[type="number"] {
+            width: 100%;
+            padding: 8px 10px;
+            border: 1px solid #d0d0d0;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        .description-cell {
+            min-width: 250px;
+        }
+        .description-cell textarea {
+            min-height: 80px;
+            resize: vertical;
+            font-size: 14px;
+        }
+        .add-row-btn {
+            background: linear-gradient(135deg, #1a3a8f 0%, #2d5aa0 100%);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: 600;
+            transition: all 0.3s;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .add-row-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(26, 58, 143, 0.3);
+        }
+        .totals-section {
+            padding: 0 25px 25px;
+            display: flex;
+            justify-content: flex-end;
+        }
+        .totals-table {
+            width: 300px;
+            border: 1px solid #e0e0e0;
+        }
+        .totals-table td {
+            padding: 10px 15px;
+        }
+        .totals-table tr:last-child {
+            font-weight: 700;
+            background-color: #f0f4fc;
+        }
+        .totals-table input {
+            border: none;
+            background: transparent;
+            text-align: right;
+            font-weight: 600;
+            color: #333;
+        }
+        .notes-section {
+            padding: 0 25px 25px;
+        }
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+        .signature-section {
+            display: flex;
+            justify-content: space-between;
+            padding: 25px;
+            border-top: 1px solid #e0e0e0;
+        }
+        .signature-box {
+            width: 45%;
+        }
+        .signature-line {
+            margin-top: 60px;
+            border-top: 1px solid #333;
+            padding-top: 5px;
+            text-align: center;
+            font-weight: 600;
+        }
+        .dates-section {
+            display: flex;
+            justify-content: space-between;
+            padding: 0 25px 25px;
+        }
+        .date-field {
+            width: 45%;
+        }
+        .print-button {
+            display: block;
+            margin: 20px auto 30px;
+            background: linear-gradient(135deg, #1a3a8f 0%, #2d5aa0 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s;
+            box-shadow: 0 4px 10px rgba(26, 58, 143, 0.3);
+        }
+        .print-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(26, 58, 143, 0.4);
+        }
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+            .container {
+                box-shadow: none;
+                border-radius: 0;
+            }
+            .print-button, .add-row-btn {
+                display: none;
+            }
+            .description-cell {
+                min-width: 250px;
+            }
+            .description-cell textarea {
+                border: none;
+                padding: 0;
+                resize: none;
+                min-height: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo-container">
+                <div class="logo">
+                          <img src="hselogoredondo.png" alt="Texto descriptivo de la imagen"                       width="150" 
+  height="150">
+                </div>
+            </div>
+            <div class="company-info">
+                <h1 class="company-name">Home Support Electric</h1>
+                <p class="company-tagline">Materiales Eléctricos Residenciales y Comerciales</p>
+            </div>
+        </div>
+        
+        <div class="document-title">COTIZACIÓN</div>
+        
+        <div class="document-number">
+            <strong>N° C-2023-001</strong>
+        </div>
+        
+        <div class="info-section">
+            <div>
+                <div class="section-title">INFORMACIÓN DE LA EMPRESA</div>
+                <div class="info-item">
+                    <div class="info-label">RFC:</div>
+                    <div class="fixed-info">RUCJ810917N71</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Dirección:</div>
+                    <div class="fixed-info">Vista a la Catedral 3001, Col. Mírador del tesoro, CP. 45608</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Teléfono y WhatsApp:</div>
+                    <div class="fixed-info">3312958108</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Sitio web:</div>
+                    <div class="fixed-info">www.homesupportelectric.com</div>
+                </div>
+            </div>
+            
+            <div>
+                <div class="section-title">INFORMACIÓN DEL CLIENTE</div>
+                <div class="info-item">
+                    <div class="info-label">CLIENTE:</div>
+                    <input type="text" id="client-name" placeholder="Nombre del Cliente">
+                </div>
+                <div class="info-item">
+                    <div class="info-label">CONTACTO:</div>
+                    <input type="text" id="contact-person" placeholder="Persona de Contacto">
+                </div>
+                <div class="info-item">
+                    <div class="info-label">TELÉFONO:</div>
+                    <input type="tel" id="client-phone" placeholder="Número de Teléfono">
+                </div>
+                <div class="info-item">
+                    <div class="info-label">CORREO:</div>
+                    <input type="email" id="client-email" placeholder="Email del Cliente">
+                </div>
+            </div>
+        </div>
+        
+        <div class="products-section">
+            <div class="section-title">DETALLE DE PRODUCTOS/SERVICIOS</div>
+            <button class="add-row-btn" onclick="addRow()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                    <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
+                </svg>
+                Agregar Fila
+            </button>
+            <table id="products-table">
+                <thead>
+                    <tr>
+                        <th width="8%">Item</th>
+                        <th width="9%">Categoría</th>
+                        <th width="8%">Cantidad</th>
+                        <th width="7%">Unidad</th>
+                        <th width="30%">Descripción</th>
+                        <th width="14%">Precio Unitario</th>
+                        <th width="14%">Importe</th>
+                    </tr>
+                </thead>
+                <tbody id="table-body">
+                    <tr>
+                        <td><input type="text" placeholder="Item"></td>
+                        <td><input type="text" placeholder="Categoría"></td>
+                        <td><input type="number" min="0" step="1" placeholder="Cantidad" class="quantity" onchange="calculateRow(this)"></td>
+                        <td><input type="text" placeholder="Unidad"></td>
+                        <td class="description-cell"><textarea placeholder="Descripción del Producto/Servicio"></textarea></td>
+                        <td><input type="number" min="0" step="0.01" placeholder="0.00" class="unit-price" onchange="calculateRow(this)"></td>
+                        <td><input type="number" min="0" step="0.01" placeholder="0.00" class="amount" readonly></td>
+                    </tr>
+                    <tr>
+                        <td><input type="text" placeholder="Item"></td>
+                        <td><input type="text" placeholder="Categoría"></td>
+                        <td><input type="number" min="0" step="1" placeholder="Cantidad" class="quantity" onchange="calculateRow(this)"></td>
+                        <td><input type="text" placeholder="Unidad"></td>
+                        <td class="description-cell"><textarea placeholder="Descripción del Producto/Servicio"></textarea></td>
+                        <td><input type="number" min="0" step="0.01" placeholder="0.00" class="unit-price" onchange="calculateRow(this)"></td>
+                        <td><input type="number" min="0" step="0.01" placeholder="0.00" class="amount" readonly></td>
+                    </tr>
+                    <tr>
+                        <td><input type="text" placeholder="Item"></td>
+                        <td><input type="text" placeholder="Categoría"></td>
+                        <td><input type="number" min="0" step="1" placeholder="Cantidad" class="quantity" onchange="calculateRow(this)"></td>
+                        <td><input type="text" placeholder="Unidad"></td>
+                        <td class="description-cell"><textarea placeholder="Descripción del Producto/Servicio"></textarea></td>
+                        <td><input type="number" min="0" step="0.01" placeholder="0.00" class="unit-price" onchange="calculateRow(this)"></td>
+                        <td><input type="number" min="0" step="0.01" placeholder="0.00" class="amount" readonly></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="totals-section">
+            <table class="totals-table">
+                <tr>
+                    <td>SUBTOTAL:</td>
+                    <td>$ <input type="number" id="subtotal" value="0.00" step="0.01" readonly style="width: 90%; text-align: right;"></td>
+                </tr>
+                <tr>
+                    <td>IVA (16%):</td>
+                    <td>$ <input type="number" id="iva" value="0.00" step="0.01" readonly style="width: 90%; text-align: right;"></td>
+                </tr>
+                <tr>
+                    <td>TOTAL:</td>
+                    <td>$ <input type="number" id="total" value="0.00" step="0.01" readonly style="width: 90%; text-align: right;"></td>
+                </tr>
+            </table>
+        </div>
+        
+        <div class="notes-section">
+            <div class="section-title">NOTAS, TÉRMINOS Y CONDICIONES</div>
+            <textarea id="notes" placeholder="Espacio para notas y condiciones de pago"></textarea>
+        </div>
+        
+        <div class="signature-section">
+            <div class="signature-box">
+                <div class="signature-line">
+                    Gerente de Ventas<br>
+                    Home Support Electric
+                </div>
+            </div>
+        </div>
+        
+        <div class="dates-section">
+            <div class="date-field">
+                <div class="info-label">Fecha de Emisión:</div>
+                <input type="date" id="issue-date">
+            </div>
+            <div class="date-field">
+                <div class="info-label">Válido hasta:</div>
+                <input type="date" id="valid-until">
+            </div>
+        </div>
+    </div>
+
+    <button class="print-button" onclick="window.print()">Imprimir / Guardar como PDF</button>
+
+    <script>
+        // Establecer fecha de emisión como hoy
+        document.getElementById('issue-date').valueAsDate = new Date();
+        
+        // Establecer fecha de vencimiento como 30 días a partir de hoy
+        const validUntil = new Date();
+        validUntil.setDate(validUntil.getDate() + 30);
+        document.getElementById('valid-until').valueAsDate = validUntil;
+        
+        // Función para calcular el importe de una fila
+        function calculateRow(input) {
+            const row = input.closest('tr');
+            const quantity = parseFloat(row.querySelector('.quantity').value) || 0;
+            const unitPrice = parseFloat(row.querySelector('.unit-price').value) || 0;
+            const amount = quantity * unitPrice;
+            
+            row.querySelector('.amount').value = amount.toFixed(2);
+            
+            // Recalcular totales
+            calculateTotals();
+        }
+        
+        // Función para calcular subtotal, IVA y total
+        function calculateTotals() {
+            let subtotal = 0;
+            const amounts = document.querySelectorAll('.amount');
+            
+            amounts.forEach(input => {
+                subtotal += parseFloat(input.value) || 0;
+            });
+            
+            const iva = subtotal * 0.16;
+            const total = subtotal + iva;
+            
+            document.getElementById('subtotal').value = subtotal.toFixed(2);
+            document.getElementById('iva').value = iva.toFixed(2);
+            document.getElementById('total').value = total.toFixed(2);
+        }
+        
+        // Función para agregar filas a la tabla
+        function addRow() {
+            const tableBody = document.getElementById('table-body');
+            const newRow = tableBody.insertRow();
+            
+            // Agregar celdas con campos de entrada
+            newRow.innerHTML = `
+                <td><input type="text" placeholder="Item"></td>
+                <td><input type="text" placeholder="Categoría"></td>
+                <td><input type="number" min="0" step="1" placeholder="Cantidad" class="quantity" onchange="calculateRow(this)"></td>
+                <td><input type="text" placeholder="Unidad"></td>
+                <td class="description-cell"><textarea placeholder="Descripción del Producto/Servicio"></textarea></td>
+                <td><input type="number" min="0" step="0.01" placeholder="0.00" class="unit-price" onchange="calculateRow(this)"></td>
+                <td><input type="number" min="0" step="0.01" placeholder="0.00" class="amount" readonly></td>
+            `;
+        }
+    </script>
+</body>
+</html>
