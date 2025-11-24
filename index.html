@@ -1,872 +1,1579 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
-  <title>Cotización | Home Support Electric</title>
-  <!-- jsPDF y SheetJS desde CDN seguros -->
-  <script src="https://unpkg.com/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
-  <script src="https://unpkg.com/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <style>
-    :root {
-      --primary: #1e40af;
-      --primary-light: #3b82f6;
-      --primary-dark: #1d4ed8;
-      --gray-50: #f8fafc;
-      --gray-100: #f1f5f9;
-      --gray-200: #e2e8f0;
-      --gray-300: #cbd5e1;
-      --gray-600: #475569;
-      --gray-700: #334155;
-      --gray-800: #1e293b;
-      --danger: #ef4444;
-      --success: #10b981;
-      --space-xs: 0.25rem;
-      --space-sm: 0.5rem;
-      --space-md: 1rem;
-      --space-lg: 1.5rem;
-      --font-sans: "Inter", system-ui, sans-serif;
-      --shadow: 0 2px 6px rgba(0,0,0,0.08);
-      --transition: all 0.2s ease;
-    }
-
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      font-family: var(--font-sans);
-      background-color: #f9fafb;
-      color: var(--gray-800);
-      line-height: 1.5;
-      padding: 12px;
-      font-size: 15px;
-    }
-
-    .container {
-      max-width: 100%;
-      background: white;
-      border-radius: 16px;
-      overflow: hidden;
-      box-shadow: var(--shadow);
-    }
-
-    /* Encabezado */
-    .header {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 12px;
-      padding: 16px;
-      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-      color: white;
-      text-align: center;
-    }
-    .logo {
-      width: 90px;
-      height: 90px;
-      border: 2px solid rgba(255,255,255,0.3);
-      border-radius: 50%;
-      background: white;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .logo img { width: 90px; height: 90px; object-fit: contain; }
-    .header h1 { font-size: 1.4rem; font-weight: 700; }
-    .header p { font-size: 0.95rem; opacity: 0.95; }
-
-    /* Sección */
-    .section {
-      padding: 16px;
-      border-bottom: 1px solid var(--gray-200);
-    }
-    .section-title {
-      font-weight: 700;
-      color: var(--primary);
-      margin-bottom: 14px;
-      font-size: 1.1rem;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    .section-title::before {
-      content: ""; width: 4px; height: 18px; background: var(--primary); border-radius: 2px;
-    }
-
-    /* Empresa / Cliente */
-    .info-card {
-      background: white;
-      border: 1px solid var(--gray-200);
-      border-radius: 12px;
-      padding: 16px;
-      box-shadow: var(--shadow);
-    }
-    .field-row {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-      margin-bottom: 12px;
-    }
-    .field-label {
-      font-weight: 600;
-      color: var(--gray-700);
-      font-size: 0.875rem;
-    }
-    .field-value {
-      width: 100%;
-      padding: 12px;
-      border: 1px solid var(--gray-300);
-      border-radius: 10px;
-      font: inherit;
-      font-size: 1rem;
-      background: white;
-    }
-    .field-value:focus {
-      outline: none;
-      border-color: var(--primary);
-      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
-    }
-    .field-web {
-      color: var(--primary);
-      text-decoration: underline;
-    }
-
-    /* Productos */
-    .table-container {
-      overflow-x: auto;
-      padding: 0 16px 16px;
-    }
-    table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
-    thead th {
-      background: var(--primary);
-      color: white;
-      font-weight: 600;
-      padding: 10px 8px;
-      text-align: left;
-    }
-    tbody tr { border-bottom: 1px solid var(--gray-200); }
-    tbody td { padding: 12px 8px; vertical-align: top; }
-    .input-cell {
-      width: 100%;
-      padding: 8px;
-      border: 1px solid var(--gray-200);
-      border-radius: 8px;
-      font: inherit;
-    }
-    .desc-cell textarea {
-      width: 100%;
-      min-height: 60px;
-      padding: 8px;
-      border: 1px solid var(--gray-200);
-      border-radius: 8px;
-      font: inherit;
-      resize: vertical;
-    }
-    .action-cell {
-      text-align: center;
-      padding: 8px !important;
-    }
-    .btn-icon {
-      width: 32px;
-      height: 32px;
-      border-radius: 8px;
-      border: none;
-      background: var(--gray-200);
-      color: var(--gray-700);
-      cursor: pointer;
-      font-weight: bold;
-    }
-    .btn-icon:hover {
-      background: var(--danger);
-      color: white;
-    }
-
-    /* Notas */
-    .notes-section {
-      padding: 0 16px 16px;
-    }
-    .combo-notes select {
-      width: 100%;
-      padding: 14px 40px 14px 14px;
-      border: 1px solid var(--gray-300);
-      border-radius: 10px;
-      font: inherit;
-      font-size: 1rem;
-      background: white url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%236b7280'%3E%3Cpath d='M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 01.753 1.659l-4.796 5.48a1 1 0 01-1.506 0z'/%3E%3C/svg%3E") no-repeat right 12px center;
-    }
-    .notes-section textarea {
-      width: 100%;
-      min-height: 140px;
-      padding: 14px;
-      border: 1px solid var(--gray-300);
-      border-radius: 10px;
-      font: inherit;
-      font-size: 0.95rem;
-    }
-
-    /* Totales */
-    .totals-bar {
-      position: sticky;
-      bottom: 0;
-      background: white;
-      padding: 14px 16px;
-      border-top: 2px solid var(--gray-200);
-      box-shadow: 0 -4px 12px rgba(0,0,0,0.05);
-      z-index: 10;
-    }
-    .totals-row {
-      display: flex;
-      justify-content: space-between;
-      font-weight: 600;
-      margin-bottom: 6px;
-      font-size: 0.95rem;
-    }
-    .totals-row.total {
-      font-size: 1.2rem;
-      color: var(--primary-dark);
-      margin-top: 6px;
-      padding-top: 8px;
-      border-top: 1px solid var(--gray-200);
-    }
-
-    /* Botones de acción */
-    .action-bar {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      padding: 16px;
-      background: var(--gray-50);
-    }
-    .btn {
-      flex: 1;
-      min-width: 130px;
-      padding: 14px;
-      border: none;
-      border-radius: 12px;
-      font-weight: 600;
-      font-size: 0.92rem;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      box-shadow: var(--shadow);
-    }
-    .btn-print { background: #6b7280; color: white; }
-    .btn-excel { background: #10b981; color: white; }
-    .btn-share { background: #0d9488; color: white; }
-    .btn-add { background: var(--primary); color: white; }
-
-    /* Footer */
-    .footer {
-      padding: 16px;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-    .date-field {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
-    .date-field input {
-      padding: 12px;
-      border: 1px solid var(--gray-300);
-      border-radius: 10px;
-      font: inherit;
-    }
-    .signature {
-      text-align: center;
-      padding-top: 12px;
-      border-top: 1px solid var(--gray-200);
-    }
-
-    .icon { width: 18px; height: 18px; stroke: currentColor; stroke-width: 2; }
-    
-    /* Imprimir */
-    @media print {
-      body { padding: 0; background: white; }
-      .container { border-radius: 0; box-shadow: none; }
-      .action-bar, .btn-add { display: none !important; }
-      .field-value, .desc-cell textarea { border: none; background: none; }
-      a { color: var(--primary) !important; text-decoration: underline !important; }
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HOME SUPPORT ELECTRIC | Control, Automatización y Distribución Eléctrica, Iluminación</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --azul-principal: #0056b3;
+            --azul-oscuro: #003366;
+            --naranja: #FF8C00;
+            --naranja-claro: #FFA500;
+            --texto-oscuro: #333333;
+            --fondo-claro: #F8F9FA;
+            --blanco: #FFFFFF;
+            --gris-claro: #e9ecef;
+            --barra-clara: #f0f4f8;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: var(--fondo-claro);
+            color: var(--texto-oscuro);
+            padding-top: 120px;
+        }
+        
+        /* Barra superior flotante */
+        .top-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background-color: var(--barra-clara);
+            color: var(--texto-oscuro);
+            padding: 10px 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            border-bottom: 3px solid var(--naranja);
+        }
+        
+        .top-bar-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        .logo-section {
+            display: flex;
+            align-items: center;
+        }
+        
+        .logo-combined {
+            font-size: 32px;
+            color: var(--naranja);
+            margin-right: 15px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .logo-combined i:first-child {
+            margin-right: 5px;
+        }
+        
+        .brand-name {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--azul-oscuro);
+        }
+        
+        .brand-subtitle {
+            font-size: 14px;
+            color: var(--azul-principal);
+            margin-top: -5px;
+        }
+        
+        .contact-info {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        
+        .contact-item {
+            margin-left: 20px;
+            display: flex;
+            align-items: center;
+            font-size: 14px;
+        }
+        
+        .contact-item i {
+            margin-right: 5px;
+            color: var(--azul-principal);
+        }
+        
+        .contact-item a {
+            color: var(--azul-principal);
+            text-decoration: none;
+            transition: color 0.3s;
+            font-weight: 600;
+        }
+        
+        .contact-item a:hover {
+            color: var(--naranja);
+        }
+        
+        .search-container {
+            position: relative;
+        }
+        
+        .search-input {
+            padding: 8px 15px;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            width: 250px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+        
+        .search-input:focus {
+            border-color: var(--azul-principal);
+        }
+        
+        .search-btn {
+            position: absolute;
+            right: 5px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: var(--azul-principal);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .search-btn:hover {
+            background: var(--azul-oscuro);
+        }
+        
+        .search-results {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 100%;
+            background: var(--blanco);
+            border-radius: 0 0 5px 5px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            display: none;
+            z-index: 1001;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .search-result-item {
+            padding: 10px;
+            border-bottom: 1px solid var(--gris-claro);
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .search-result-item:hover {
+            background-color: var(--gris-claro);
+        }
+        
+        .cart-icon {
+            font-size: 20px;
+            color: var(--azul-principal);
+            position: relative;
+            cursor: pointer;
+            transition: color 0.3s;
+            margin-left: 20px;
+        }
+        
+        .cart-icon:hover {
+            color: var(--naranja);
+        }
+        
+        .cart-count {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background-color: var(--naranja);
+            color: var(--blanco);
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        /* Banner principal con imagen de tablero de control */
+        .main-banner {
+            background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('https://images.unsplash.com/photo-1581092580497-e0d23cbdf1dc?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80') center/cover;
+            color: var(--blanco);
+            text-align: center;
+            padding: 100px 20px;
+            margin-bottom: 40px;
+            position: relative;
+        }
+        
+        .banner-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .banner-content h1 {
+            font-size: 48px;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+        
+        .banner-content p {
+            font-size: 24px;
+            margin-bottom: 30px;
+            font-weight: 600;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+        }
+        
+        .banner-btn {
+            background-color: var(--naranja);
+            color: var(--blanco);
+            border: none;
+            padding: 12px 30px;
+            border-radius: 4px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .banner-btn:hover {
+            background-color: var(--naranja-claro);
+        }
+        
+        /* Navegación */
+        .main-nav {
+            background-color: var(--blanco);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 60px;
+            z-index: 999;
+        }
+        
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+        }
+        
+        .nav-menu {
+            display: flex;
+            list-style: none;
+        }
+        
+        .nav-menu li {
+            margin: 0 15px;
+        }
+        
+        .nav-menu a {
+            text-decoration: none;
+            color: var(--azul-oscuro);
+            font-weight: 600;
+            padding: 15px 0;
+            display: block;
+            transition: color 0.3s;
+            position: relative;
+        }
+        
+        .nav-menu a:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 3px;
+            background-color: var(--naranja);
+            transition: width 0.3s;
+        }
+        
+        .nav-menu a:hover {
+            color: var(--naranja);
+        }
+        
+        .nav-menu a:hover:after {
+            width: 100%;
+        }
+        
+        /* Sección de historia */
+        .history-section {
+            max-width: 1200px;
+            margin: 0 auto 50px;
+            padding: 0 20px;
+        }
+        
+        .section-title {
+            font-size: 32px;
+            color: var(--azul-oscuro);
+            margin-bottom: 30px;
+            position: relative;
+            display: inline-block;
+        }
+        
+        .section-title:after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 3px;
+            background-color: var(--naranja);
+        }
+        
+        .history-content {
+            font-size: 18px;
+            line-height: 1.6;
+            background-color: var(--blanco);
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            border-left: 4px solid var(--azul-principal);
+        }
+        
+        .history-content p {
+            margin-bottom: 20px;
+        }
+        
+        /* Módulos de negocio */
+        .modules-section {
+            max-width: 1200px;
+            margin: 0 auto 50px;
+            padding: 0 20px;
+        }
+        
+        .modules-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 25px;
+        }
+        
+        .module-card {
+            background-color: var(--blanco);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+            text-align: center;
+            border-top: 4px solid var(--azul-principal);
+            height: 300px;
+            position: relative;
+        }
+        
+        .module-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+            border-top-color: var(--naranja);
+        }
+        
+        .module-image {
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--blanco);
+            position: relative;
+        }
+        
+        .module-image:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+        }
+        
+        .module-content {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.7);
+            color: var(--blanco);
+        }
+        
+        .module-content h3 {
+            color: var(--blanco);
+            margin-bottom: 10px;
+            font-size: 20px;
+        }
+        
+        .module-btn {
+            background-color: var(--naranja);
+            color: var(--blanco);
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.3s;
+            margin-top: 10px;
+        }
+        
+        .module-btn:hover {
+            background-color: var(--naranja-claro);
+        }
+        
+        /* Carrusel de marcas horizontal */
+        .brands-section {
+            max-width: 1200px;
+            margin: 0 auto 50px;
+            padding: 0 20px;
+        }
+        
+        .brands-carousel {
+            background-color: var(--blanco);
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .brands-scroll {
+            display: flex;
+            animation: scroll 30s linear infinite;
+            width: max-content;
+        }
+        
+        .brand-item {
+            padding: 10px 20px;
+            font-weight: bold;
+            color: var(--azul-oscuro);
+            background-color: var(--fondo-claro);
+            margin: 0 10px;
+            border-radius: 5px;
+            border: 1px solid var(--gris-claro);
+            white-space: nowrap;
+        }
+        
+        @keyframes scroll {
+            0% {
+                transform: translateX(0);
+            }
+            100% {
+                transform: translateX(-50%);
+            }
+        }
+        
+        /* Sección de servicios */
+        .services-section {
+            max-width: 1200px;
+            margin: 0 auto 50px;
+            padding: 0 20px;
+        }
+        
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+        }
+        
+        .service-card {
+            background-color: var(--blanco);
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            border-left: 4px solid var(--naranja);
+        }
+        
+        .service-card h3 {
+            color: var(--azul-oscuro);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .service-card h3 i {
+            margin-right: 10px;
+            color: var(--naranja);
+        }
+        
+        /* Formulario de cotización */
+        .quote-section {
+            max-width: 800px;
+            margin: 0 auto 50px;
+            padding: 0 20px;
+        }
+        
+        .quote-form {
+            background-color: var(--blanco);
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--azul-oscuro);
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        
+        .form-control:focus {
+            border-color: var(--azul-principal);
+            outline: none;
+        }
+        
+        textarea.form-control {
+            min-height: 120px;
+            resize: vertical;
+        }
+        
+        .btn {
+            background-color: var(--azul-principal);
+            color: var(--blanco);
+            border: none;
+            padding: 12px 25px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: background-color 0.3s;
+        }
+        
+        .btn:hover {
+            background-color: var(--naranja);
+        }
+        
+        .btn-naranja {
+            background-color: var(--naranja);
+        }
+        
+        .btn-naranja:hover {
+            background-color: var(--naranja-claro);
+        }
+        
+        /* Contacto */
+        .contact-section {
+            max-width: 1200px;
+            margin: 0 auto 50px;
+            padding: 0 20px;
+        }
+        
+        .contact-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+        
+        .contact-info {
+            background-color: var(--blanco);
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+        
+        .contact-info h3 {
+            color: var(--azul-oscuro);
+            margin-bottom: 20px;
+            border-bottom: 2px solid var(--naranja);
+            padding-bottom: 10px;
+        }
+        
+        .contact-details {
+            margin-bottom: 25px;
+        }
+        
+        .contact-details p {
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .contact-details i {
+            margin-right: 10px;
+            color: var(--azul-principal);
+            width: 20px;
+        }
+        
+        .map-container {
+            height: 400px;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+        
+        /* Footer */
+        .main-footer {
+            background-color: var(--azul-oscuro);
+            color: var(--blanco);
+            padding: 50px 0 20px;
+        }
+        
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+        }
+        
+        .footer-section h3 {
+            font-size: 20px;
+            margin-bottom: 20px;
+            position: relative;
+            padding-bottom: 10px;
+        }
+        
+        .footer-section h3:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 50px;
+            height: 2px;
+            background-color: var(--naranja);
+        }
+        
+        .footer-links {
+            list-style: none;
+        }
+        
+        .footer-links li {
+            margin-bottom: 10px;
+        }
+        
+        .footer-links a {
+            color: #ccc;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .footer-links a:hover {
+            color: var(--naranja);
+        }
+        
+        .social-links {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .social-link {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background-color: rgba(255,255,255,0.1);
+            border-radius: 50%;
+            color: var(--blanco);
+            transition: background-color 0.3s;
+        }
+        
+        .social-link:hover {
+            background-color: var(--naranja);
+        }
+        
+        .social-link.facebook {
+            background-color: #3b5998;
+        }
+        
+        .social-link.whatsapp {
+            background-color: #25D366;
+        }
+        
+        .social-link.email {
+            background-color: var(--azul-principal);
+        }
+        
+        .copyright {
+            text-align: center;
+            padding-top: 30px;
+            margin-top: 30px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        /* Botones flotantes - Mejorados para mantener siempre visibles */
+        .floating-buttons {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .floating-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            color: var(--blanco);
+            font-size: 24px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            transition: transform 0.3s, background-color 0.3s;
+            text-decoration: none;
+            position: relative;
+        }
+        
+        .floating-btn:hover {
+            transform: scale(1.1);
+        }
+        
+        .whatsapp-btn {
+            background-color: #25D366;
+        }
+        
+        .whatsapp-btn:hover {
+            background-color: #128C7E;
+        }
+        
+        .email-btn {
+            background-color: var(--azul-principal);
+        }
+        
+        .email-btn:hover {
+            background-color: var(--azul-oscuro);
+        }
+        
+        .facebook-btn {
+            background-color: #3b5998;
+        }
+        
+        .facebook-btn:hover {
+            background-color: #2d4373;
+        }
+        
+        /* Etiquetas para los botones flotantes */
+        .floating-label {
+            position: absolute;
+            right: 70px;
+            background-color: rgba(0,0,0,0.7);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 14px;
+            white-space: nowrap;
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+        }
+        
+        .floating-btn:hover .floating-label {
+            opacity: 1;
+        }
+        
+        /* Carrito de compras */
+        .cart-sidebar {
+            position: fixed;
+            top: 0;
+            right: -400px;
+            width: 400px;
+            height: 100%;
+            background-color: var(--blanco);
+            box-shadow: -2px 0 10px rgba(0,0,0,0.1);
+            z-index: 1002;
+            transition: right 0.3s;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        
+        .cart-sidebar.active {
+            right: 0;
+        }
+        
+        .cart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--gris-claro);
+        }
+        
+        .close-cart {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--texto-oscuro);
+        }
+        
+        .cart-items {
+            margin-bottom: 20px;
+        }
+        
+        .cart-item {
+            display: flex;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--gris-claro);
+        }
+        
+        .cart-item-image {
+            width: 80px;
+            height: 80px;
+            background-color: var(--fondo-claro);
+            margin-right: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .cart-item-details {
+            flex: 1;
+        }
+        
+        .cart-item-title {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .cart-item-price {
+            color: var(--azul-principal);
+        }
+        
+        .cart-total {
+            font-size: 18px;
+            font-weight: bold;
+            text-align: right;
+            margin-top: 20px;
+            color: var(--azul-oscuro);
+        }
+        
+        .checkout-btn {
+            width: 100%;
+            padding: 12px;
+            background-color: var(--naranja);
+            color: var(--blanco);
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: background 0.3s;
+        }
+        
+        .checkout-btn:hover {
+            background-color: var(--naranja-claro);
+        }
+        
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 1001;
+            display: none;
+        }
+        
+        .overlay.active {
+            display: block;
+        }
+        
+        /* API Response Message */
+        .api-message {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+            display: none;
+        }
+        
+        .api-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .api-error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        /* Responsive */
+        @media (max-width: 992px) {
+            .top-bar-container {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .contact-info {
+                margin-top: 10px;
+                justify-content: center;
+            }
+            
+            .nav-container {
+                flex-direction: column;
+            }
+            
+            .nav-menu {
+                margin-top: 15px;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            .contact-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .cart-sidebar {
+                width: 100%;
+                right: -100%;
+            }
+            
+            .floating-buttons {
+                bottom: 20px;
+                right: 20px;
+            }
+            
+            .floating-btn {
+                width: 50px;
+                height: 50px;
+                font-size: 20px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            body {
+                padding-top: 180px;
+            }
+            
+            .banner-content h1 {
+                font-size: 36px;
+            }
+            
+            .banner-content p {
+                font-size: 20px;
+            }
+            
+            .search-input {
+                width: 200px;
+            }
+            
+            .modules-grid {
+                grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .top-bar-container {
+                padding: 0 10px;
+            }
+            
+            .brand-name {
+                font-size: 18px;
+            }
+            
+            .contact-item {
+                margin-left: 10px;
+                font-size: 12px;
+            }
+            
+            .search-input {
+                width: 150px;
+            }
+            
+            .modules-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .floating-buttons {
+                bottom: 15px;
+                right: 15px;
+            }
+            
+            .floating-btn {
+                width: 45px;
+                height: 45px;
+                font-size: 18px;
+                margin-bottom: 10px;
+            }
+            
+            .floating-label {
+                font-size: 12px;
+                right: 55px;
+            }
+        }
+    </style>
 </head>
 <body>
-  <div class="container">
-    <!-- Encabezado -->
-    <header class="header">
-      <div class="logo">
-        <img src="https://github.com/aldacom1986/HSE/blob/main/hselogo64.png?raw=true" alt="Home Support Electric" id="logo-img">
-      </div>
-      <h1>Home Support Electric</h1>
-      <p>Materiales Eléctricos Residenciales y Comerciales</p>
-    </header>
-
-    <!-- EMPRESA -->
-    <section class="section">
-      <h2 class="section-title">INFORMACIÓN DE LA EMPRESA</h2>
-      <div class="info-card">
-        <div class="field-row">
-          <label class="field-label">RFC:</label>
-          <input type="text" id="emp-rfc" class="field-value" value="RUCJ810917N71" readonly>
+    <!-- Barra superior flotante -->
+    <div class="top-bar">
+        <div class="top-bar-container">
+            <div class="logo-section">
+                <div class="logo-combined">
+                    <i class="fas fa-bolt"></i>
+                    <i class="fas fa-home"></i>
+                    <i class="fas fa-building"></i>
+                </div>
+                <div>
+                    <div class="brand-name">HOME SUPPORT ELECTRIC</div>
+                    <div class="brand-subtitle">Control, Automatización y Distribución Eléctrica, Iluminación</div>
+                </div>
+            </div>
+            <div class="contact-info">
+                <div class="contact-item">
+                    <i class="fas fa-phone"></i>
+                    <a href="tel:3312958101">3312958101</a>
+                </div>
+                <div class="contact-item">
+                    <i class="fas fa-envelope"></i>
+                    <a href="mailto:salesmanager@homesupportelectric.com">salesmanager@homesupportelectric.com</a>
+                </div>
+                <div class="search-container">
+                    <input type="text" class="search-input" placeholder="Buscar productos...">
+                    <button class="search-btn"><i class="fas fa-search"></i></button>
+                    <div class="search-results" id="searchResults">
+                        <!-- Los resultados de búsqueda aparecerán aquí -->
+                    </div>
+                </div>
+                <div class="cart-icon" id="cartIcon">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span class="cart-count">0</span>
+                </div>
+            </div>
         </div>
-        <div class="field-row">
-          <label class="field-label">Nombre:</label>
-          <input type="text" id="emp-nombre" class="field-value" value="Home Support Electric" readonly>
-        </div>
-        <div class="field-row">
-          <label class="field-label">Dirección:</label>
-          <input type="text" id="emp-direccion" class="field-value" value="Vista a la Catedral 3001, Col. Mirador, CP. 45608" readonly>
-        </div>
-        <div class="field-row">
-          <label class="field-label">Teléfono y WhatsApp:</label>
-          <input type="tel" id="emp-tel" class="field-value" value="33 1295 8108" readonly>
-        </div>
-        <div class="field-row">
-          <label class="field-label">Sitio web:</label>
-          <a href="http://www.homesupportelectric.com" target="_blank" class="field-value field-web">www.homesupportelectric.com</a>
-        </div>
-      </div>
-    </section>
-
-    <!-- CLIENTE -->
-    <section class="section">
-      <h2 class="section-title">INFORMACIÓN DEL CLIENTE</h2>
-      <div class="info-card">
-        <div class="field-row">
-          <label class="field-label">CLIENTE:</label>
-          <input type="text" id="cli-nombre" class="field-value" placeholder="[Nombre del Cliente]">
-        </div>
-        <div class="field-row">
-          <label class="field-label">CONTACTO:</label>
-          <input type="text" id="cli-contacto" class="field-value" placeholder="[Persona de Contacto]">
-        </div>
-        <div class="field-row">
-          <label class="field-label">TELÉFONO:</label>
-          <input type="tel" id="cli-tel" class="field-value" placeholder="[Número de Teléfono]">
-        </div>
-        <div class="field-row">
-          <label class="field-label">CORREO:</label>
-          <input type="email" id="cli-email" class="field-value" placeholder="[Email del Cliente]">
-        </div>
-      </div>
-    </section>
-
-    <!-- Productos -->
-    <section class="section">
-      <h2 class="section-title">PRODUCTOS/SERVICIOS</h2>
-      <div class="table-container">
-        <table id="productos">
-          <thead>
-            <tr>
-              <th>ÍTEM</th>
-              <th>CANT</th>
-              <th>UNID</th>
-              <th>DESCRIPCIÓN</th>
-              <th>P. UNIT</th>
-              <th>IMPORTE</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody id="productos-body"></tbody>
-        </table>
-        <button class="btn btn-add" style="width:100%; margin-top:12px;" onclick="agregarFila()">
-          ➕ Agregar Producto
-        </button>
-      </div>
-    </section>
-
-    <!-- Notas -->
-    <section class="notes-section">
-      <h2 class="section-title">NOTAS Y CONDICIONES</h2>
-      <div class="combo-notes">
-        <select id="notas-combo" onchange="aplicarNotaPredefinida(this.value)">
-          <option value="">— Seleccione —</option>
-          <option value="default" selected>✔️ Condiciones Estándar HSE</option>
-          <option value="credito">💳 Crédito 20 días</option>
-          <option value="anticipo">💰 50% anticipo</option>
-        </select>
-      </div>
-      <textarea id="notas" placeholder="Notas personalizadas..."></textarea>
-    </section>
-
-    <!-- Totales -->
-    <div class="totals-bar">
-      <div class="totals-row">
-        <span>SUBTOTAL:</span>
-        <span id="subtotal">$0.00</span>
-      </div>
-      <div class="totals-row">
-        <span>IVA (16%):</span>
-        <span id="iva">$0.00</span>
-      </div>
-      <div class="totals-row total">
-        <span>TOTAL:</span>
-        <span id="total">$0.00</span>
-      </div>
     </div>
 
-    <!-- Botones: Imprimir/PDF, Excel, Compartir -->
-    <div class="action-bar">
-      <button class="btn btn-print" onclick="imprimirOGenerarPDF()">
-        <svg class="icon" viewBox="0 0 24 24"><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h2V6a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v3h2a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><path d="M6 9H4a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h2"/><path d="M18 9h2a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><path d="M6 14h12"/></svg>
-        Imprimir / PDF
-      </button>
-      <button class="btn btn-excel" onclick="exportarExcel()">
-        <svg class="icon" viewBox="0 0 24 24"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
-        Excel
-      </button>
-      <button class="btn btn-share" onclick="mostrarCompartir()">
-        <svg class="icon" viewBox="0 0 24 24"><path d="M18 8a6 6 0 0 1 0 12 5 5 0 0 1-4.24-2H6a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h8.24A5 5 0 0 1 18 8z"/><circle cx="12" cy="10" r="2"/></svg>
-        Compartir
-      </button>
-    </div>
+    <!-- Banner principal -->
+    <section class="main-banner" id="inicio">
+        <div class="banner-content">
+            <h1>HOME SUPPORT ELECTRIC</h1>
+            <p>Material eléctrico en general</p>
+            <a href="#productos" class="banner-btn">Ver Productos</a>
+        </div>
+    </section>
+
+    <!-- Navegación principal -->
+    <nav class="main-nav">
+        <div class="nav-container">
+            <ul class="nav-menu">
+                <li><a href="#inicio">Inicio</a></li>
+                <li><a href="#nosotros">Nosotros</a></li>
+                <li><a href="#productos">Productos</a></li>
+                <li><a href="#servicios">Servicios</a></li>
+                <li><a href="#cotizaciones">Cotizaciones</a></li>
+                <li><a href="#contacto">Contacto</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Sección de historia -->
+    <section class="history-section" id="nosotros">
+        <h2 class="section-title">Nuestra Historia</h2>
+        <div class="history-content">
+            <p>Tienda Online de Artículos Eléctricos, Iluminación, Control, ferretero y automatización. Equipo Residencial, comercial e Industrial con las marcas líderes a Nivel Global.</p>
+            <p>Schneider Electric, ABB, Siemens, Bticino, Acuity Brands, RTE, Truper, Urrea, Tecnolite, Megamex, SMC, Sick, Balluff, Carlo Gavazzi, Finder, Eaton, Condumex, General Cable, Kobrex, Condulac, Conductores del Norte.</p>
+            <p>Delta, IFM, Baumer, Festo, Evans, Nassar Electronic, DLB, Yaskawa, Omron, Autonics, Fluke, Pilz, Philips, Honeywell, Banner, Autonics.</p>
+        </div>
+    </section>
+
+    <!-- Módulos de negocio -->
+    <section class="modules-section" id="productos">
+        <h2 class="section-title">Nuestros Productos</h2>
+        <div class="modules-grid">
+            <!-- Se generarán dinámicamente 6 módulos -->
+        </div>
+    </section>
+
+    <!-- Carrusel de marcas -->
+    <section class="brands-section">
+        <h2 class="section-title">Marcas Partner</h2>
+        <div class="brands-carousel">
+            <div class="brands-scroll">
+                <!-- Las marcas se cargarán dinámicamente -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Sección de servicios -->
+    <section class="services-section" id="servicios">
+        <h2 class="section-title">Nuestros Servicios</h2>
+        <div class="services-grid">
+            <div class="service-card">
+                <h3><i class="fas fa-shopping-cart"></i> Venta de Material Eléctrico</h3>
+                <p>Venta de material eléctrico en general para la construcción, la industria, etc.</p>
+            </div>
+            <div class="service-card">
+                <h3><i class="fas fa-user-cog"></i> Asesoría Técnica</h3>
+                <p>Asesoría técnica especializada en la determinación de sus necesidades de material y equipo eléctrico.</p>
+            </div>
+            <div class="service-card">
+                <h3><i class="fas fa-truck"></i> Entregas a Domicilio</h3>
+                <p>Hacemos entregas a domicilio en Guadalajara, Jalisco y sus alrededores cercanos. Entregas a: El Salto, Tlajomulco, Tlaquepaque, Tonalá, Zapopan, Zapotlanejo, etc., y eventualmente a otros estados de la república.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Formulario de cotización -->
+    <section class="quote-section" id="cotizaciones">
+        <h2 class="section-title">Solicitar Cotización</h2>
+        <div id="apiMessage" class="api-message"></div>
+        <form class="quote-form" id="quoteForm">
+            <div class="form-group">
+                <label for="name">Nombre completo</label>
+                <input type="text" id="name" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label for="email">Correo electrónico</label>
+                <input type="email" id="email" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label for="phone">Teléfono</label>
+                <input type="tel" id="phone" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label for="company">Empresa (opcional)</label>
+                <input type="text" id="company" class="form-control">
+            </div>
+            <div class="form-group">
+                <label for="products">Productos de interés</label>
+                <textarea id="products" class="form-control" rows="4" required></textarea>
+            </div>
+            <div class="form-group">
+                <label for="message">Mensaje adicional</label>
+                <textarea id="message" class="form-control" rows="4"></textarea>
+            </div>
+            <button type="submit" class="btn btn-naranja">Enviar Cotización</button>
+        </form>
+    </section>
+
+    <!-- Sección de contacto -->
+    <section class="contact-section" id="contacto">
+        <h2 class="section-title">Contacto</h2>
+        <div class="contact-container">
+            <div class="contact-info">
+                <h3>Información de Contacto</h3>
+                <div class="contact-details">
+                    <p><i class="fas fa-phone"></i> +52 33 12 95 81 08 (Ing. José de Jesús Rubio Castro)</p>
+                    <p><i class="fas fa-phone"></i> +52 33 49 91 34 69 (Lic. Aldo Aldaco Galvan)</p>
+                    <p><i class="fas fa-envelope"></i> <a href="mailto:salesmanager@homesupportelectric.com" style="color: var(--azul-principal);">salesmanager@homesupportelectric.com</a></p>
+                    <p><i class="fas fa-envelope"></i> <a href="www.homesupportelectric.com" style="color: var(--azul-principal);">www.homesupportelectric.com</a></p>
+                     <!-- En catálogo.html, para regresar al cotizador -->
+                    <p><i class="fas fa-envelope"></i>   <a href="cotizador.html">Generar cotización Web</a> </p>
+
+                    <p><i class="fas fa-map-marker-alt"></i> Av. Cruz del Sur # 3321-1, Jardines del Sur, Guadalajara, Jalisco. C.P. 44950</p>
+                </div>
+                <h3>Síguenos en Redes Sociales</h3>
+                <div class="social-links">
+                    <a href="https://www.facebook.com/?sk=welcome" class="social-link facebook" target="_blank">
+                        <i class="fab fa-facebook-f"></i>
+                    </a>
+                    <a href="https://wa.me/523312958108" class="social-link whatsapp" target="_blank">
+                        <i class="fab fa-whatsapp"></i>
+                    </a>
+                    <a href="mailto:salesmanager@homesupportelectric.com" class="social-link email">
+                        <i class="fas fa-envelope"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="map-container">
+                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3732.415724290496!2d-103.3431489246865!3d20.68440438087816!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8428b1f7a63dfc13%3A0x3c53d3d8e5c5a5b5!2sAv.%20Cruz%20del%20Sur%20%233321-1%2C%20Jardines%20del%20Sur%2C%2044950%20Guadalajara%2C%20Jal.!5e0!3m2!1ses!2smx!4v1690834567890!5m2!1ses!2smx" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+            </div>
+        </div>
+    </section>
 
     <!-- Footer -->
-    <footer class="footer">
-      <div class="date-field">
-        <label class="field-label">Fecha de Emisión</label>
-        <input type="date" id="fecha-emision">
-      </div>
-      <div class="date-field">
-        <label class="field-label">Válido hasta</label>
-        <input type="date" id="fecha-vencimiento">
-      </div>
-      <div class="signature">
-        <p>Gerente de Ventas</p>
-        <p><strong>Home Support Electric</strong></p>
-      </div>
+    <footer class="main-footer">
+        <div class="footer-container">
+            <div class="footer-section">
+                <h3>HOME SUPPORT ELECTRIC</h3>
+                <p>Control, Automatización y Distribución Eléctrica, Iluminación</p>
+                <p>Tienda Online de Artículos Eléctricos con las marcas líderes a Nivel Global.</p>
+            </div>
+            <div class="footer-section">
+                <h3>Enlaces Rápidos</h3>
+                <ul class="footer-links">
+                    <li><a href="#inicio">Inicio</a></li>
+                    <li><a href="#nosotros">Nosotros</a></li>
+                    <li><a href="#productos">Productos</a></li>
+                    <li><a href="#servicios">Servicios</a></li>
+                    <li><a href="#cotizaciones">Cotizaciones</a></li>
+                    <li><a href="#contacto">Contacto</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Contacto</h3>
+                <p><i class="fas fa-map-marker-alt"></i> Av. Cruz del Sur #3321-1, Guadalajara, Jal.</p>
+                <p><i class="fas fa-phone"></i> 3312958101</p>
+                <p><i class="fas fa-envelope"></i> <a href="mailto:salesmanager@homesupportelectric.com" style="color: #ccc;">salesmanager@homesupportelectric.com</a></p>
+                <div class="social-links">
+                    <a href="https://www.facebook.com/?sk=welcome" class="social-link facebook" target="_blank">
+                        <i class="fab fa-facebook-f"></i>
+                    </a>
+                    <a href="https://wa.me/523312958108" class="social-link whatsapp" target="_blank">
+                        <i class="fab fa-whatsapp"></i>
+                    </a>
+                    <a href="mailto:salesmanager@homesupportelectric.com" class="social-link email">
+                        <i class="fas fa-envelope"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="copyright">
+            <p>&copy; 2023 HOME SUPPORT ELECTRIC. Todos los derechos reservados. | <a href="https://www.homesupportelectric.com/" style="color: #ccc;">www.homesupportelectric.com</a></p>
+        </div>
     </footer>
-  </div>
 
-  <!-- Modal Compartir -->
-  <div id="modal-compartir" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:1000; align-items:center; justify-content:center;">
-    <div style="background:white; border-radius:16px; width:90%; max-width:400px; padding:24px; text-align:center;">
-      <h3 style="font-weight:700; color:var(--gray-800); margin-bottom:20px;">Compartir Cotización</h3>
-      <div style="display:flex; flex-direction:column; gap:12px;">
-        <button class="btn" style="background:#25D366; color:white;" onclick="compartirWhatsApp()">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white"><path d="M18 8a6 6 0 0 1 0 12 5 5 0 0 1-4.24-2H6a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h8.24A5 5 0 0 1 18 8z"/><circle cx="12" cy="10" r="2"/></svg>
-          WhatsApp
-        </button>
-        <button class="btn" style="background:#3b82f6; color:white;" onclick="compartirEmail()">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><path d="M22 6l-10 7L2 6"/></svg>
-          Email
-        </button>
-      </div>
-      <button style="margin-top:20px; background:var(--gray-200); color:var(--gray-700); border-radius:10px; border:none; padding:10px 20px;" onclick="cerrarCompartir()">Cancelar</button>
+    <!-- Botones flotantes - Siempre visibles -->
+    <div class="floating-buttons">
+        <a href="https://wa.me/523312958108" class="floating-btn whatsapp-btn" target="_blank">
+            <i class="fab fa-whatsapp"></i>
+            <span class="floating-label">WhatsApp</span>
+        </a>
+        <a href="mailto:salesmanager@homesupportelectric.com" class="floating-btn email-btn">
+            <i class="fas fa-envelope"></i>
+            <span class="floating-label">Correo</span>
+        </a>
+        <a href="https://www.facebook.com/?sk=welcome" class="floating-btn facebook-btn" target="_blank">
+            <i class="fab fa-facebook-f"></i>
+            <span class="floating-label">Facebook</span>
+        </a>
     </div>
-  </div>
 
-  <script>
-    // Acceso a jsPDF
-    const { jsPDF } = window.jspdf;
+    <!-- Carrito de compras -->
+    <div class="overlay" id="overlay"></div>
+    <div class="cart-sidebar" id="cartSidebar">
+        <div class="cart-header">
+            <h3>Carrito de Compras</h3>
+            <button class="close-cart" id="closeCart">&times;</button>
+        </div>
+        <div class="cart-items" id="cartItems">
+            <!-- Los items del carrito se agregarán aquí -->
+        </div>
+        <div class="cart-total" id="cartTotal">Total: $0.00</div>
+        <button class="checkout-btn">Proceder al Checkout</button>
+    </div>
 
-    const NOTAS_DEFAULT = `• Los precios son en pesos mexicanos, sujetos a cambio sin previo aviso.
-• Los tiempos de entrega son salvo previa venta; en caso de que al recibir su orden ya no se tenga el material, se le informará de inmediato.
-• Los precios son L.A.B. en Guadalajara.
-• La fecha de entrega es la correspondiente en cada descripción.
-• Se requiere el 50% de anticipo y 50% contra aviso de disponibilidad.
-• Depositar el anticipo a nombre de José de Jesús Rubio Castro a la cuenta de BBVA 012320001643356192.
-• Condiciones de crédito: 20 días.`;
+    <!-- Scripts -->
+    <script>
+        // Datos para los módulos de productos con imágenes de fondo
+        const modulesData = [
+            { 
+                name: "Cables", 
+                image: "https://images.unsplash.com/photo-1581093458799-ec0ca6d0dabc?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                desc: "Cables eléctricos de alta y baja tensión para todo tipo de instalaciones"
+            },
+            { 
+                name: "Iluminación", 
+                image: "https://images.unsplash.com/photo-1507473885765-e6ed057f782c?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                desc: "Sistemas de iluminación industrial, comercial y residencial"
+            },
+            { 
+                name: "Ferretería y Soptería", 
+                image: "https://images.unsplash.com/photo-1581092580497-e0d23cbdf1dc?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                desc: "Herramientas, materiales y sistemas de soportería para instalaciones eléctricas"
+            },
+            { 
+                name: "Control y Distribución", 
+                image: "https://images.unsplash.com/photo-1581094794329-c8112a89af24?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                desc: "Equipos de control, distribución y protección eléctrica"
+            },
+            { 
+                name: "Automatización e Instrumentos de Medición", 
+                image: "https://images.unsplash.com/photo-1581093458973-1c47664c13d9?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                desc: "Sistemas de automatización y equipos de medición eléctrica"
+            },
+            { 
+                name: "Complementarios", 
+                image: "https://images.unsplash.com/photo-1581092580497-e0d23cbdf1dc?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                desc: "Productos complementarios y accesorios para instalaciones eléctricas"
+            }
+        ];
 
-    // Fechas
-    const hoy = new Date();
-    const hoyStr = hoy.toISOString().slice(0,10);
-    const vto = new Date();
-    vto.setDate(hoy.getDate() + 30);
-    const vtoStr = vto.toISOString().slice(0,10);
-    document.getElementById('fecha-emision').value = hoyStr;
-    document.getElementById('fecha-vencimiento').value = vtoStr;
+        // Datos para el carrusel de marcas
+        const brandsData = [
+            "3M", "ANCLO", "BTICINO", "BUSSMANN", "CATUSA", "CONDULAC", "CONDUMEX", 
+            "COOPER CROUSSE HINDS", "CROUZET", "CUTLER-HAMMER", "DOMEX", "FERRAZ SHAWMUT", 
+            "FINDER", "FPE", "GENERAL ELECTRIC", "HARTMANN", "HUBELL", "IUSAKARP", 
+            "KOBREX", "LATINCASA", "ARROW HART", "LEGRAND", "LEVITON", "LITHONIA LIGHTING", 
+            "LUMICON", "MERCURY", "MOELLER", "OMEGA", "OMRON", "OSRAM", "PHILLIPS", 
+            "ROYER", "SIEMENS", "SQD", "TECNO LITE", "TELEMECANIQUE", "VIAKON", "WEIDMULLER"
+        ];
 
-    // Inicializar
-    document.addEventListener('DOMContentLoaded', () => {
-      document.getElementById('notas').value = NOTAS_DEFAULT;
-      agregarFila();
-    });
+        // Carrito de compras
+        let cart = [];
+        let cartCount = 0;
 
-    // Productos
-    let contador = 1;
-    function agregarFila() {
-      const tbody = document.getElementById('productos-body');
-      const tr = document.createElement('tr');
-      tr.innerHTML = `
-        <td style="font-weight:600">${contador}</td>
-        <td><input type="number" min="0" value="1" class="input-cell" oninput="calcularFila(this)" style="width:70px"></td>
-        <td><input type="text" placeholder="pza" class="input-cell" style="width:60px" oninput="guardarCache()"></td>
-        <td class="desc-cell"><textarea placeholder="Descripción..." oninput="guardarCache()"></textarea></td>
-        <td><input type="number" min="0" step="0.01" value="0.00" class="input-cell" oninput="calcularFila(this)" style="width:80px"></td>
-        <td style="font-weight:600; color:#1e40af">$0.00</td>
-        <td class="action-cell">
-          <button class="btn-icon" onclick="eliminarFila(this)">🗑️</button>
-        </td>
-      `;
-      tbody.appendChild(tr);
-      contador++;
-      guardarCache();
-    }
+        // Generar módulos de productos
+        function generateModules() {
+            const modulesGrid = document.querySelector('.modules-grid');
+            modulesData.forEach(module => {
+                const moduleCard = document.createElement('div');
+                moduleCard.className = 'module-card';
+                moduleCard.innerHTML = `
+                    <div class="module-image" style="background-image: url('${module.image}')">
+                        <div class="module-content">
+                            <h3>${module.name}</h3>
+                            <p>${module.desc}</p>
+                            <button class="module-btn add-to-cart" data-product="${module.name}">Agregar al carrito</button>
+                        </div>
+                    </div>
+                `;
+                modulesGrid.appendChild(moduleCard);
+            });
 
-    function eliminarFila(btn) {
-      const tr = btn.closest('tr');
-      tr.remove();
-      renumerar();
-      calcularTotales();
-      guardarCache();
-    }
+            // Agregar event listeners a los botones de agregar al carrito
+            document.querySelectorAll('.add-to-cart').forEach(button => {
+                button.addEventListener('click', function() {
+                    const product = this.getAttribute('data-product');
+                    addToCart(product);
+                });
+            });
+        }
 
-    function renumerar() {
-      const filas = document.querySelectorAll('#productos-body tr');
-      filas.forEach((tr, i) => tr.cells[0].textContent = i + 1);
-      contador = filas.length + 1;
-    }
+        // Inicializar carrusel de marcas horizontal
+        function initBrandsCarousel() {
+            const brandsScroll = document.querySelector('.brands-scroll');
+            
+            // Duplicar las marcas para crear un efecto de scroll infinito
+            const brandsDuplicated = [...brandsData, ...brandsData];
+            
+            brandsDuplicated.forEach(brand => {
+                const brandItem = document.createElement('div');
+                brandItem.className = 'brand-item';
+                brandItem.textContent = brand;
+                brandsScroll.appendChild(brandItem);
+            });
+        }
 
-    function calcularFila(input) {
-      const tr = input.closest('tr');
-      const cant = parseFloat(tr.cells[1].querySelector('input').value) || 0;
-      const precio = parseFloat(tr.cells[4].querySelector('input').value) || 0;
-      const importe = cant * precio;
-      tr.cells[5].textContent = '$' + importe.toFixed(2);
-      calcularTotales();
-      guardarCache();
-    }
+        // Función de búsqueda con AJAX para WooCommerce
+        function setupSearch() {
+            const searchInput = document.querySelector('.search-input');
+            const searchBtn = document.querySelector('.search-btn');
+            const searchResults = document.getElementById('searchResults');
+            
+            // Función para realizar la búsqueda
+            const performSearch = () => {
+                const query = searchInput.value.trim();
+                
+                if (query.length < 2) {
+                    searchResults.style.display = 'none';
+                    return;
+                }
+                
+                // Llamada AJAX a la API de WooCommerce
+                fetchSearchResults(query);
+            };
+            
+            searchInput.addEventListener('input', performSearch);
+            searchBtn.addEventListener('click', performSearch);
+            
+            // Ocultar resultados al hacer clic fuera
+            document.addEventListener('click', function(e) {
+                if (!searchInput.contains(e.target) && !searchResults.contains(e.target) && !searchBtn.contains(e.target)) {
+                    searchResults.style.display = 'none';
+                }
+            });
+        }
+        
+        // Función para buscar productos usando la API REST de WooCommerce
+        function fetchSearchResults(query) {
+            // En una implementación real con WordPress/WooCommerce, esta sería la URL de tu API
+            const apiUrl = '/wp-json/wc/v3/products?search=' + encodeURIComponent(query);
+            
+            // Simulación de llamada a la API (reemplazar con llamada real)
+            const mockResults = [
+                { name: "Cable THHN 12 AWG", price: "45.50" },
+                { name: "Interruptor termomagnético 20A", price: "120.00" },
+                { name: "Contactor 24V CC", price: "85.75" },
+                { name: "Transformador 480V a 120V", price: "350.00" },
+                { name: "Luminaria LED industrial", price: "280.50" },
+                { name: "Tubería conduit PVC 1\"", price: "25.30" },
+                { name: "Motor trifásico 5HP", price: "1200.00" },
+                { name: "Panel de control NEMA 4X", price: "450.25" }
+            ].filter(item => item.name.toLowerCase().includes(query.toLowerCase()));
+            
+            displaySearchResults(mockResults);
+        }
+        
+        function displaySearchResults(results) {
+            const searchResults = document.getElementById('searchResults');
+            searchResults.innerHTML = '';
+            
+            if (results.length === 0) {
+                searchResults.innerHTML = '<div class="search-result-item">No se encontraron productos</div>';
+            } else {
+                results.forEach(result => {
+                    const resultItem = document.createElement('div');
+                    resultItem.className = 'search-result-item';
+                    resultItem.innerHTML = `
+                        <div><strong>${result.name}</strong></div>
+                        <div>Precio: $${result.price}</div>
+                    `;
+                    resultItem.addEventListener('click', function() {
+                        document.querySelector('.search-input').value = result.name;
+                        searchResults.style.display = 'none';
+                    });
+                    searchResults.appendChild(resultItem);
+                });
+            }
+            
+            searchResults.style.display = 'block';
+        }
 
-    function calcularTotales() {
-      let subtotal = 0;
-      document.querySelectorAll('#productos-body tr').forEach(tr => {
-        const txt = tr.cells[5].textContent.replace('$', '');
-        subtotal += parseFloat(txt) || 0;
-      });
-      const iva = subtotal * 0.16;
-      const total = subtotal + iva;
-      document.getElementById('subtotal').textContent = '$' + subtotal.toFixed(2);
-      document.getElementById('iva').textContent = '$' + iva.toFixed(2);
-      document.getElementById('total').textContent = '$' + total.toFixed(2);
-    }
+        // Manejo del formulario de cotización con AJAX
+        function setupQuoteForm() {
+            const form = document.getElementById('quoteForm');
+            const apiMessage = document.getElementById('apiMessage');
+            
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // Recopilar datos del formulario
+                const formData = {
+                    name: document.getElementById('name').value,
+                    email: document.getElementById('email').value,
+                    phone: document.getElementById('phone').value,
+                    company: document.getElementById('company').value,
+                    products: document.getElementById('products').value,
+                    message: document.getElementById('message').value,
+                    action: 'send_quote'
+                };
+                
+                // Enviar datos mediante AJAX a WordPress
+                sendQuoteAjax(formData, apiMessage);
+            });
+        }
+        
+        // Función para enviar la cotización mediante AJAX a WordPress
+        function sendQuoteAjax(formData, messageElement) {
+            // Simulación de envío AJAX (reemplazar con implementación real)
+            setTimeout(() => {
+                showApiMessage('Cotización enviada correctamente. Nos pondremos en contacto pronto.', 'success', messageElement);
+                document.getElementById('quoteForm').reset();
+            }, 1000);
+        }
+        
+        function showApiMessage(message, type, element) {
+            element.textContent = message;
+            element.className = 'api-message';
+            element.classList.add(type === 'success' ? 'api-success' : 'api-error');
+            element.style.display = 'block';
+            
+            // Ocultar el mensaje después de 5 segundos
+            setTimeout(() => {
+                element.style.display = 'none';
+            }, 5000);
+        }
 
-    function aplicarNotaPredefinida(key) {
-      if (key === 'default') {
-        document.getElementById('notas').value = NOTAS_DEFAULT;
-      } else if (key === 'credito') {
-        document.getElementById('notas').value = `• Condiciones de crédito: 20 días naturales desde la fecha de factura.\n• Requiere aprobación crediticia previa.\n• Documentos: copia de RFC, acta constitutiva y estado de cuenta bancario.`;
-      } else if (key === 'anticipo') {
-        document.getElementById('notas').value = `• Se requiere el 50% de anticipo para liberar pedido.\n• El 50% restante se paga contra aviso de disponibilidad.\n• Datos bancarios: BBVA • José de Jesús Rubio Castro • Cuenta: 012320001643356192`;
-      }
-      guardarCache();
-    }
+        // Funcionalidad del carrito de compras
+        function setupCart() {
+            const cartIcon = document.getElementById('cartIcon');
+            const cartSidebar = document.getElementById('cartSidebar');
+            const closeCart = document.getElementById('closeCart');
+            const overlay = document.getElementById('overlay');
+            
+            cartIcon.addEventListener('click', function() {
+                cartSidebar.classList.add('active');
+                overlay.classList.add('active');
+            });
+            
+            closeCart.addEventListener('click', function() {
+                cartSidebar.classList.remove('active');
+                overlay.classList.remove('active');
+            });
+            
+            overlay.addEventListener('click', function() {
+                cartSidebar.classList.remove('active');
+                overlay.classList.remove('active');
+            });
+        }
+        
+        function addToCart(productName) {
+            // Simulamos un producto con precio aleatorio para demostración
+            const price = (Math.random() * 1000 + 10).toFixed(2);
+            
+            const existingProduct = cart.find(item => item.name === productName);
+            
+            if (existingProduct) {
+                existingProduct.quantity += 1;
+            } else {
+                cart.push({
+                    name: productName,
+                    price: parseFloat(price),
+                    quantity: 1
+                });
+            }
+            
+            cartCount += 1;
+            updateCartDisplay();
+            
+            // Mostrar mensaje de confirmación
+            showApiMessage(`"${productName}" ha sido agregado al carrito.`, 'success', document.getElementById('apiMessage'));
+        }
+        
+        function updateCartDisplay() {
+            const cartCountElement = document.querySelector('.cart-count');
+            const cartItemsElement = document.getElementById('cartItems');
+            const cartTotalElement = document.getElementById('cartTotal');
+            
+            // Actualizar contador
+            cartCountElement.textContent = cartCount;
+            
+            // Actualizar items del carrito
+            cartItemsElement.innerHTML = '';
+            
+            let total = 0;
+            
+            cart.forEach(item => {
+                const itemTotal = item.price * item.quantity;
+                total += itemTotal;
+                
+                const cartItemElement = document.createElement('div');
+                cartItemElement.className = 'cart-item';
+                cartItemElement.innerHTML = `
+                    <div class="cart-item-image">
+                        <i class="fas fa-box"></i>
+                    </div>
+                    <div class="cart-item-details">
+                        <div class="cart-item-title">${item.name}</div>
+                        <div class="cart-item-price">$${item.price.toFixed(2)} x ${item.quantity}</div>
+                        <div class="cart-item-total">Total: $${itemTotal.toFixed(2)}</div>
+                    </div>
+                `;
+                
+                cartItemsElement.appendChild(cartItemElement);
+            });
+            
+            // Actualizar total
+            cartTotalElement.textContent = `Total: $${total.toFixed(2)}`;
+        }
 
-    function guardarCache() {
-      const data = {
-        cliente: {
-          nombre: document.getElementById('cli-nombre').value,
-          contacto: document.getElementById('cli-contacto').value,
-          tel: document.getElementById('cli-tel').value,
-          email: document.getElementById('cli-email').value
-        },
-        notas: document.getElementById('notas').value,
-        fechaEmision: document.getElementById('fecha-emision').value,
-        fechaVencimiento: document.getElementById('fecha-vencimiento').value,
-        filas: []
-      };
-
-      document.querySelectorAll('#productos-body tr').forEach(tr => {
-        const inps = tr.querySelectorAll('input, textarea');
-        data.filas.push({
-          cantidad: inps[0].value,
-          unidad: inps[1].value,
-          descripcion: inps[2].value,
-          precio: inps[3].value
+        // Inicialización cuando el DOM esté listo
+        document.addEventListener('DOMContentLoaded', function() {
+            generateModules();
+            initBrandsCarousel();
+            setupSearch();
+            setupQuoteForm();
+            setupCart();
         });
-      });
-
-      localStorage.setItem('hse_cotizacion_final', JSON.stringify(data));
-    }
-
-    // Cargar al iniciar
-    document.addEventListener('DOMContentLoaded', () => {
-      const saved = localStorage.getItem('hse_cotizacion_final');
-      if (saved) {
-        const d = JSON.parse(saved);
-        document.getElementById('cli-nombre').value = d.cliente?.nombre || '';
-        document.getElementById('cli-contacto').value = d.cliente?.contacto || '';
-        document.getElementById('cli-tel').value = d.cliente?.tel || '';
-        document.getElementById('cli-email').value = d.cliente?.email || '';
-        document.getElementById('notas').value = d.notas || NOTAS_DEFAULT;
-        document.getElementById('fecha-emision').value = d.fechaEmision || hoyStr;
-        document.getElementById('fecha-vencimiento').value = d.fechaVencimiento || vtoStr;
-
-        const tbody = document.getElementById('productos-body');
-        tbody.innerHTML = '';
-        contador = 1;
-        d.filas?.forEach(f => {
-          agregarFila();
-          const rows = document.querySelectorAll('#productos-body tr');
-          const last = rows[rows.length - 1];
-          const inps = last.querySelectorAll('input, textarea');
-          inps[0].value = f.cantidad;
-          inps[1].value = f.unidad;
-          inps[2].value = f.descripcion;
-          inps[3].value = f.precio;
-          calcularFila(inps[3]);
-        });
-      }
-    });
-
-    document.querySelectorAll('input, textarea, select').forEach(el => {
-      el.addEventListener('input', guardarCache);
-    });
-
-    // ✅ ✅ ✅ IMPRIMIR / PDF FUNCIONAL (CORREGIDO)
-    function imprimirOGenerarPDF() {
-      const cliNombre = document.getElementById('cli-nombre').value || 'Cliente';
-      if (!cliNombre.trim()) {
-        alert("⚠️ Por favor ingresa el nombre del cliente.");
-        return;
-      }
-
-      // Opción: imprimir directo (rápido en celulares)
-      if (window.confirm("¿Deseas imprimir directamente?\n\n(cancelar para generar PDF descargable)")) {
-        window.print();
-        return;
-      }
-
-      // ✅ Generar PDF con jsPDF (versión segura)
-      try {
-        const doc = new jsPDF({
-          orientation: 'portrait',
-          unit: 'mm',
-          format: 'a4'
-        });
-
-        const pageWidth = doc.internal.pageSize.width;
-        const margin = 15;
-
-        // Logo como base64 (evita CORS)
-        const logoBase64 = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGQAAABkCAYAAABw4pVUAAAABmJLR0QA/wD/AP+gvaeTAAAFGUlEQVR4nO2dW2gcVRjHf7O72aRpkzZN0jZpEqW2NlJbbW1vWG2tVbTig1gVfBARfBCkID6ID1JQEUVB8EEQK1JQ8KKI+CAo2KZpkqbZNG2a5n6JN22b3ZlzZs7snrMz5/8Dw7I7M9/5zne+75xvZg6klJIiYtG0egAUf1AIUgRQCFIEUAhSBFAIUgRQCFIEUAhSBFAIUgRQCFIEUAhSBFAIUgRQCFIEUAhSBFAIUgRQCFIEUAhSBFAIUgRQCFIEUAhSBFAIUgRQCFIEUAhSBFAIUgRQCFIEUAhSBFAIUgRQCFIEUAhSBFAIUgRQCFIEUAhSBFAIUgRQCFIEUAhSBFAIUgRQCFIEUAhSBFAIUgRQCFIE/AeJYRzUwNjJYwAAAABJRU5ErkJggg==";
-        // ↑ Este es un placeholder blanco (evita fallos). En producción, usa tu logo real en base64.
-
-        doc.addImage(logoBase64, 'PNG', margin, 15, 25, 25, 'SLOW');
-
-        doc.setFontSize(18);
-        doc.setTextColor(30, 64, 175);
-        doc.text("Home Support Electric", pageWidth / 2, 25, { align: 'center' });
-
-        doc.setFontSize(11);
-        doc.setTextColor(100);
-        doc.text("Materiales Eléctricos Residenciales y Comerciales", pageWidth / 2, 32, { align: 'center' });
-
-        doc.setDrawColor(226, 232, 240);
-        doc.line(margin, 40, pageWidth - margin, 40);
-
-        // Empresa
-        doc.setFontSize(10);
-        doc.setTextColor(0);
-        doc.setFont('Inter', 'bold');
-        doc.text("INFORMACIÓN DE LA EMPRESA", margin, 50);
-        doc.setFont('Inter', 'normal');
-        doc.text("RFC:", margin, 57); doc.text("RUCJ810917N71", margin + 20, 57);
-        doc.text("Dirección:", margin, 62); doc.text("Vista a la Catedral 3001, Col. Mirador, CP. 45608", margin + 20, 62, { maxWidth: 80 });
-        doc.text("Tel/WhatsApp:", margin, 67); doc.text("33 1295 8108", margin + 20, 67);
-        doc.text("Web:", margin, 72); doc.text("www.homesupportelectric.com", margin + 20, 72);
-
-        // Cliente
-        doc.setFont('Inter', 'bold');
-        doc.text("INFORMACIÓN DEL CLIENTE", pageWidth / 2 + 5, 50);
-        doc.setFont('Inter', 'normal');
-        doc.text("CLIENTE:", pageWidth / 2 + 5, 57); doc.text(cliNombre, pageWidth / 2 + 25, 57, { maxWidth: 70 });
-        doc.text("CONTACTO:", pageWidth / 2 + 5, 62); doc.text(document.getElementById('cli-contacto').value || "", pageWidth / 2 + 25, 62, { maxWidth: 70 });
-        doc.text("TELÉFONO:", pageWidth / 2 + 5, 67); doc.text(document.getElementById('cli-tel').value || "", pageWidth / 2 + 25, 67);
-        doc.text("CORREO:", pageWidth / 2 + 5, 72); doc.text(document.getElementById('cli-email').value || "", pageWidth / 2 + 25, 72, { maxWidth: 70 });
-
-        // Productos
-        let y = 85;
-        doc.setFont('Inter', 'bold');
-        doc.setFontSize(12);
-        doc.setTextColor(30, 64, 175);
-        doc.text("DETALLE DE PRODUCTOS/SERVICIOS", margin, y);
-        y += 10;
-
-        const headers = ["ÍTEM", "CANT", "UNID", "DESCRIPCIÓN", "P. UNIT", "IMPORTE"];
-        const colW = [10, 15, 15, 90, 25, 25];
-        doc.setFont('Inter', 'bold');
-        doc.setFontSize(8);
-        doc.setTextColor(255);
-        doc.setFillColor(30, 64, 175);
-
-        let x = margin;
-        headers.forEach((h, i) => {
-          doc.rect(x, y, colW[i], 6, 'F');
-          doc.text(h, x + 2, y + 4);
-          x += colW[i];
-        });
-        y += 6;
-
-        doc.setFont('Inter', 'normal');
-        doc.setFontSize(7);
-        doc.setTextColor(0);
-        const filas = document.querySelectorAll('#productos-body tr');
-        filas.forEach(tr => {
-          const celdas = tr.cells;
-          const item = celdas[0].textContent;
-          const cant = celdas[1].querySelector('input').value;
-          const uni = celdas[2].querySelector('input').value;
-          const desc = celdas[3].querySelector('textarea').value || "";
-          const precio = celdas[4].querySelector('input').value;
-          const imp = celdas[5].textContent;
-
-          const descLines = doc.splitTextToSize(desc, 88);
-          const h = Math.max(8, descLines.length * 3.5 + 3);
-
-          doc.setDrawColor(226, 232, 240);
-          doc.rect(margin, y, 180, h);
-          doc.text(item, margin + 2, y + 5);
-          doc.text(cant, margin + 12, y + 5);
-          doc.text(uni, margin + 27, y + 5);
-          doc.text(descLines, margin + 43, y + 5);
-          doc.text(`$${parseFloat(precio).toFixed(2)}`, margin + 135, y + 5);
-          doc.text(imp, margin + 162, y + 5);
-
-          y += h;
-          if (y > 260) {
-            doc.addPage();
-            y = 20;
-          }
-        });
-
-        // Totales
-        if (y > 245) { doc.addPage(); y = 20; }
-        y += 8;
-        const subtotal = document.getElementById('subtotal').textContent;
-        const iva = document.getElementById('iva').textContent;
-        const total = document.getElementById('total').textContent;
-
-        doc.setFont('Inter', 'bold');
-        doc.setFontSize(10);
-        doc.setTextColor(30, 64, 175);
-        doc.text("SUBTOTAL:", pageWidth - 50, y); doc.text(subtotal, pageWidth - 15, y, { align: 'right' }); y += 6;
-        doc.text("IVA (16%):", pageWidth - 50, y); doc.text(iva, pageWidth - 15, y, { align: 'right' }); y += 6;
-        doc.setFontSize(12);
-        doc.text("TOTAL:", pageWidth - 50, y); doc.text(total, pageWidth - 15, y, { align: 'right' });
-
-        // Notas
-        y += 10;
-        doc.setFont('Inter', 'bold');
-        doc.setFontSize(10);
-        doc.setTextColor(0);
-        doc.text("NOTAS Y CONDICIONES:", margin, y);
-        y += 6;
-        doc.setFont('Inter', 'normal');
-        doc.setFontSize(8);
-        const notas = document.getElementById('notas').value || "";
-        const lines = doc.splitTextToSize(notas, 180);
-        doc.text(lines, margin, y);
-
-        // Footer
-        const fechaEmi = document.getElementById('fecha-emision').value || hoyStr;
-        const fechaVto = document.getElementById('fecha-vencimiento').value || vtoStr;
-        y = 275;
-        doc.setFontSize(8);
-        doc.text(`Fecha de Emisión: ${fechaEmi}`, margin, y);
-        doc.text(`Válido hasta: ${fechaVto}`, pageWidth / 2, y);
-        doc.setFont('Inter', 'bold');
-        doc.text("Gerente de Ventas", pageWidth - 60, y - 12);
-        doc.setTextColor(30, 64, 175);
-        doc.text("Home Support Electric", pageWidth - 60, y);
-
-        // ✅ Descarga automática
-        doc.save(`Cotizacion_HSE_${cliNombre.replace(/\s+/g, '_')}.pdf`);
-      } catch (e) {
-        console.error("Error generando PDF:", e);
-        alert("⚠️ No se pudo generar el PDF. Intenta imprimir directamente o verifica tu conexión.");
-      }
-    }
-
-    // ✅ EXPORTAR EXCEL FUNCIONAL
-    function exportarExcel() {
-      const cliNombre = document.getElementById('cli-nombre').value || 'Cliente';
-      if (!cliNombre.trim()) {
-        alert("⚠️ Por favor ingresa el nombre del cliente.");
-        return;
-      }
-
-      const data = [
-        ["COTIZACIÓN | Home Support Electric"],
-        [],
-        ["INFORMACIÓN DE LA EMPRESA", "", "", "INFORMACIÓN DEL CLIENTE"],
-        ["RFC:", "RUCJ810917N71", "", "CLIENTE:", cliNombre],
-        ["Nombre:", "Home Support Electric", "", "CONTACTO:", document.getElementById('cli-contacto').value || ""],
-        ["Dirección:", "Vista a la Catedral 3001, Col. Mirador, CP. 45608", "", "TELÉFONO:", document.getElementById('cli-tel').value || ""],
-        ["Tel/WhatsApp:", "33 1295 8108", "", "CORREO:", document.getElementById('cli-email').value || ""],
-        ["Web:", "www.homesupportelectric.com", "", "", ""],
-        [],
-        ["ÍTEM", "CANTIDAD", "UNIDAD", "DESCRIPCIÓN", "PRECIO UNITARIO", "IMPORTE"]
-      ];
-
-      document.querySelectorAll('#productos-body tr').forEach((tr, i) => {
-        const inps = tr.querySelectorAll('input, textarea');
-        data.push([
-          i + 1,
-          inps[0].value,
-          inps[1].value,
-          inps[2].value,
-          parseFloat(inps[3].value) || 0,
-          tr.cells[5].textContent.replace('$', '')
-        ]);
-      });
-
-      data.push([]);
-      data.push(["SUBTOTAL", "", "", "", "", document.getElementById('subtotal').textContent.replace('$', '')]);
-      data.push(["IVA (16%)", "", "", "", "", document.getElementById('iva').textContent.replace('$', '')]);
-      data.push(["TOTAL", "", "", "", "", document.getElementById('total').textContent.replace('$', '')]);
-      data.push([]);
-      data.push(["NOTAS Y CONDICIONES"]);
-      data.push([document.getElementById('notas').value || ""]);
-      data.push([]);
-      data.push([
-        "Fecha Emisión:",
-        document.getElementById('fecha-emision').value || hoyStr,
-        "",
-        "Válido hasta:",
-        document.getElementById('fecha-vencimiento').value || vtoStr
-      ]);
-      data.push(["", "", "", "Gerente de Ventas"]);
-      data.push(["", "", "", "Home Support Electric"]);
-
-      const ws = XLSX.utils.aoa_to_sheet(data);
-      ws['!cols'] = [{wch:6}, {wch:12}, {wch:12}, {wch:40}, {wch:18}, {wch:18}];
-      const wb = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(wb, ws, "Cotización");
-      XLSX.writeFile(wb, `Cotizacion_HSE_${cliNombre.replace(/\s+/g, '_')}.xlsx`);
-    }
-
-    // ✅ COMPARTIR
-    function mostrarCompartir() {
-      document.getElementById('modal-compartir').style.display = 'flex';
-    }
-    function cerrarCompartir() {
-      document.getElementById('modal-compartir').style.display = 'none';
-    }
-
-    function compartirWhatsApp() {
-      const nombre = document.getElementById('cli-nombre').value || 'Cliente';
-      const total = document.getElementById('total').textContent;
-      const mensaje = `¡Hola ${nombre}! 📩\n\nTe envío la cotización de Home Support Electric.\n\n📋 Total: ${total}\n📞 33 1295 8108\n🌐 www.homesupportelectric.com`;
-      const url = `https://wa.me/523312958108?text=${encodeURIComponent(mensaje)}`;
-      window.open(url, '_blank');
-      cerrarCompartir();
-    }
-
-    function compartirEmail() {
-      const nombre = document.getElementById('cli-nombre').value || 'Cliente';
-      const total = document.getElementById('total').textContent;
-      const email = document.getElementById('cli-email').value || '';
-      const asunto = `Cotización Home Support Electric - ${nombre}`;
-      const cuerpo = `Estimado(a) ${nombre}:\n\nAdjunto encontrarás la cotización solicitada.\n\n- Total: ${total}\n- Válida hasta: ${document.getElementById('fecha-vencimiento').value || ''}\n\nQuedamos atentos a tus comentarios.\n\nSaludos cordiales,\nHome Support Electric\n📞 33 1295 8108\n🌐 www.homesupportelectric.com`;
-      const mailto = `mailto:${email}?subject=${encodeURIComponent(asunto)}&body=${encodeURIComponent(cuerpo)}`;
-      window.open(mailto, '_blank');
-      cerrarCompartir();
-    }
-  </script>
+    </script>
 </body>
 </html>
