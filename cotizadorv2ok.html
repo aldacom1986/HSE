@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cotización - Home Support Electric</title>
+    <script src="https://unpkg.com/xlsx/dist/xlsx.full.min.js"></script>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+		
+		img {
+			width: 90px;
+			height: 90px;
+			object-fit: contain;
+                   }
+        body {
+            background-color: #f5f7fa;
+            padding: 10px;
+            color: #333;
+            line-height: 1.5;
+            font-size: 14px;
+        }
+        .container {
+            max-width: 100%;
+            margin: 0 auto;
+            background: white;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .header {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            background: linear-gradient(135deg, #1a3a8f 0%, #2d5aa0 100%);
+            color: white;
+            flex-wrap: wrap;
+        }
+         .logo-container {
+     
+            text-align: center;
+            font-weight: bold;
+            color: #1a3a8f;
+            font-size: 12px;
+            line-height: 1.1;
+        }
+        .logo-svg {
+            width: 100%;
+            height: 100%;
+        }
+        .company-info {
+            flex: 1;
+            min-width: 200px;
+        }
+        .company-name {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 3px;
+        }
+        .company-tagline {
+            font-size: 12px;
+            opacity: 0.9;
+        }
+        .document-title {
+            font-size: 20px;
+            font-weight: 700;
+            text-align: center;
+            padding: 15px;
+            background-color: #f0f4fc;
+            border-bottom: 2px solid #1a3a8f;
+        }
+        .document-number {
+            text-align: right;
+            padding: 10px 15px;
+            background-color: #f8f9fa;
+            border-bottom: 1px solid #e0e0e0;
+            font-size: 16px;
+            font-weight: 600;
+        }
+        .info-section {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+            padding: 15px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        @media (min-width: 768px) {
+            .info-section {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+        .section-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #1a3a8f;
+            padding-bottom: 5px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+        .info-item {
+            margin-bottom: 8px;
+        }
+        .info-label {
+            font-weight: 600;
+            margin-bottom: 3px;
+            color: #555;
+            font-size: 13px;
+        }
+        .fixed-info {
+            padding: 5px 0;
+            color: #444;
+            font-size: 13px;
+        }
+        input[type="text"], input[type="email"], input[type="tel"], input[type="date"], textarea, select {
+            width: 100%;
+            padding: 8px 10px;
+            border: 1px solid #d0d0d0;
+            border-radius: 4px;
+            font-size: 14px;
+            transition: border 0.3s;
+        }
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: #1a3a8f;
+            box-shadow: 0 0 0 2px rgba(26, 58, 143, 0.2);
+        }
+        .products-section {
+            padding: 15px;
+            overflow-x: auto;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 15px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            min-width: 550px;
+        }
+        th {
+            background-color: #1a3a8f;
+            color: white;
+            text-align: left;
+            padding: 10px 8px;
+            font-weight: 600;
+            font-size: 13px;
+        }
+        td {
+            padding: 8px;
+            border-bottom: 1px solid #e0e0e0;
+            vertical-align: top;
+        }
+        tbody tr:hover {
+            background-color: #f8f9fa;
+        }
+        /* Eliminar botones de incremento/decremento en campos numéricos */
+        input[type="number"] {
+            width: 100%;
+            padding: 6px 8px;
+            border: 1px solid #d0d0d0;
+            border-radius: 4px;
+            font-size: 13px;
+            -moz-appearance: textfield;
+        }
+        input[type="number"]::-webkit-outer-spin-button,
+        input[type="number"]::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        .description-cell {
+            min-width: 150px;
+        }
+        .description-cell textarea {
+            min-height: 60px;
+            resize: vertical;
+            font-size: 13px;
+        }
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+        .add-row-btn, .delete-row-btn {
+            background: linear-gradient(135deg, #1a3a8f 0%, #2d5aa0 100%);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            flex: 1;
+            min-width: 120px;
+            justify-content: center;
+        }
+        .delete-row-btn {
+            background: linear-gradient(135deg, #d32f2f 0%, #f44336 100%);
+        }
+        .add-row-btn:hover, .delete-row-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
+        }
+        .totals-section {
+            padding: 0 15px 15px;
+            display: flex;
+            justify-content: flex-end;
+        }
+        .totals-table {
+            width: 100%;
+            max-width: 300px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .totals-table td {
+            padding: 10px 12px;
+        }
+        .totals-table tr:first-child {
+            background-color: #f8f9fa;
+        }
+        .totals-table tr:nth-child(2) {
+            background-color: #fff3e0;
+        }
+        .totals-table tr:last-child {
+            font-weight: 700;
+            background: linear-gradient(135deg, #66bb6a 0%, #4caf50 100%);
+            color: white;
+            font-size: 16px;
+        }
+        .totals-table input {
+            border: none;
+            background: transparent;
+            text-align: right;
+            font-weight: 600;
+            color: #333;
+            width: 100%;
+            padding: 0;
+            font-size: 15px;
+        }
+        .totals-table tr:last-child input {
+            color: white;
+            font-weight: 700;
+            font-size: 16px;
+        }
+        .totals-table tr:nth-child(2) input {
+            color: #e65100;
+            font-weight: 600;
+        }
+        .currency-label {
+            font-weight: 600;
+            margin-right: 5px;
+        }
+        .notes-section {
+            padding: 0 15px 15px;
+        }
+        textarea {
+            min-height: 80px;
+            resize: vertical;
+            font-size: 14px;
+        }
+        .signature-section {
+            display: flex;
+            justify-content: space-between;
+            padding: 15px;
+            border-top: 1px solid #e0e0e0;
+        }
+        .signature-box {
+            width: 45%;
+        }
+        .signature-line {
+            margin-top: 40px;
+            border-top: 1px solid #333;
+            padding-top: 3px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        .dates-section {
+            display: flex;
+            justify-content: space-between;
+            padding: 0 15px 15px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .date-field {
+            width: 100%;
+        }
+        @media (min-width: 480px) {
+            .date-field {
+                width: 48%;
+            }
+        }
+        .global-actions {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: 15px 0 20px;
+            flex-wrap: wrap;
+        }
+        .print-button, .export-button, .whatsapp-button {
+            background: linear-gradient(135deg, #1a3a8f 0%, #2d5aa0 100%);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s;
+            box-shadow: 0 2px 5px rgba(26, 58, 143, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex: 1;
+            max-width: 200px;
+            justify-content: center;
+        }
+        .export-button {
+            background: linear-gradient(135deg, #0d8b2c 0%, #1aa83c 100%);
+        }
+        .whatsapp-button {
+            background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
+        }
+        .print-button:hover, .export-button:hover, .whatsapp-button:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+            .container {
+                box-shadow: none;
+                border-radius: 0;
+            }
+            .global-actions, .action-buttons {
+                display: none;
+            }
+            .description-cell textarea {
+                border: none;
+                padding: 0;
+                resize: none;
+                min-height: auto;
+            }
+        }
+        /* Estilos para campos que se autoajustan */
+        .auto-adjust {
+            width: 100%;
+        }
+        .table-input {
+            border: 1px solid #d0d0d0;
+            border-radius: 4px;
+            padding: 5px 6px;
+            font-size: 13px;
+            width: 100%;
+            transition: border 0.3s;
+        }
+        .table-input:focus {
+            outline: none;
+            border-color: #1a3a8f;
+            box-shadow: 0 0 0 2px rgba(26, 58, 143, 0.2);
+        }
+        .delete-cell {
+            width: 40px;
+            text-align: center;
+        }
+        .delete-btn {
+            background: #f44336;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 25px;
+            height: 25px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            transition: all 0.3s;
+        }
+        .delete-btn:hover {
+            background: #d32f2f;
+            transform: scale(1.1);
+        }
+        .item-cell {
+            width: 50px;
+            text-align: center;
+        }
+        .item-number {
+            font-weight: 600;
+            color: #1a3a8f;
+            background: #f0f4fc;
+            padding: 6px;
+            border-radius: 4px;
+            display: inline-block;
+            min-width: 25px;
+        }
+        .unit-cell {
+            width: 70px;
+        }
+        .terms-selector {
+            margin-bottom: 10px;
+        }
+        .terms-selector select {
+            background-color: #f8f9fa;
+            border: 2px solid #1a3a8f;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo-container">
+             <img src="https://github.com/aldacom1986/HSE/blob/main/hselogo64.png?raw=true" alt="Home Support Electric" id="logo-img">
+            </div>
+            <div class="company-info">
+                <h1 class="company-name">Home Support Electric</h1>
+                <p class="company-tagline">Materiales Eléctricos Residenciales y Comerciales</p>
+            </div>
+        </div>
+        
+        <div class="document-title">COTIZACIÓN</div>
+        
+        <div class="document-number">
+            <strong>N° C-2023-001</strong>
+        </div>
+        
+        <div class="info-section">
+            <div>
+                <div class="section-title">INFORMACIÓN DE LA EMPRESA</div>
+                <div class="info-item">
+                    <div class="info-label">RFC:</div>
+                    <div class="fixed-info">RUCJ810917N71</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Dirección:</div>
+                    <div class="fixed-info">Vista a la Catedral 3001, Cal. Míndico, CP. 45608</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Teléfono y WhatsApp:</div>
+                    <div class="fixed-info">33 1295 8108</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Sitio web:</div>
+                    <div class="fixed-info">www.homesupportelectric.com</div>
+                </div>
+            </div>
+            
+            <div>
+                <div class="section-title">INFORMACIÓN DEL CLIENTE</div>
+                <div class="info-item">
+                    <div class="info-label">CLIENTE:</div>
+                    <input type="text" id="client-name" placeholder="Nombre del Cliente" class="auto-adjust">
+                </div>
+                <div class="info-item">
+                    <div class="info-label">CONTACTO:</div>
+                    <input type="text" id="contact-person" placeholder="Persona de Contacto" class="auto-adjust">
+                </div>
+                <div class="info-item">
+                    <div class="info-label">TELÉFONO:</div>
+                    <input type="tel" id="client-phone" placeholder="Número de Teléfono" class="auto-adjust">
+                </div>
+                <div class="info-item">
+                    <div class="info-label">CORREO:</div>
+                    <input type="email" id="client-email" placeholder="Email del Cliente" class="auto-adjust">
+                </div>
+            </div>
+        </div>
+        
+        <div class="products-section">
+            <div class="section-title">DETALLE DE PRODUCTOS/SERVICIOS</div>
+            <div class="action-buttons">
+                <button class="add-row-btn" onclick="addRow()">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
+                        <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
+                    </svg>
+                    Agregar Fila
+                </button>
+                <button class="delete-row-btn" onclick="deleteLastRow()">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
+                        <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
+                        <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
+                    </svg>
+                    Eliminar Última
+                </button>
+            </div>
+            <table id="products-table">
+                <thead>
+                    <tr>
+                        <th width="5%"></th>
+                        <th width="6%">Item</th>
+                        <th width="10%">Cantidad</th>
+                        <th width="10%">Unidad</th>
+                        <th width="35%">Descripción</th>
+                        <th width="14%">Precio Unitario</th>
+                        <th width="14%">Importe</th>
+                    </tr>
+                </thead>
+                <tbody id="table-body">
+                    <tr>
+                        <td class="delete-cell">
+                            <button class="delete-btn" onclick="deleteRow(this)">×</button>
+                        </td>
+                        <td class="item-cell">
+                            <div class="item-number">1</div>
+                        </td>
+                        <td><input type="number" min="0" step="1" placeholder="Cant" class="table-input auto-adjust quantity" oninput="calculateRow(this)"></td>
+                        <td class="unit-cell">
+                            <input type="text" value="pza" class="table-input auto-adjust">
+                        </td>
+                        <td class="description-cell"><textarea placeholder="Descripción del producto o servicio" class="auto-adjust"></textarea></td>
+                        <td><input type="number" min="0" step="0.01" placeholder="0.00" class="table-input auto-adjust unit-price" oninput="calculateRow(this)"></td>
+                        <td><input type="text" placeholder="0.00" class="table-input auto-adjust amount" readonly></td>
+                    </tr>
+                    <tr>
+                        <td class="delete-cell">
+                            <button class="delete-btn" onclick="deleteRow(this)">×</button>
+                        </td>
+                        <td class="item-cell">
+                            <div class="item-number">2</div>
+                        </td>
+                        <td><input type="number" min="0" step="1" placeholder="Cant" class="table-input auto-adjust quantity" oninput="calculateRow(this)"></td>
+                        <td class="unit-cell">
+                            <input type="text" value="pza" class="table-input auto-adjust">
+                        </td>
+                        <td class="description-cell"><textarea placeholder="Descripción del producto o servicio" class="auto-adjust"></textarea></td>
+                        <td><input type="number" min="0" step="0.01" placeholder="0.00" class="table-input auto-adjust unit-price" oninput="calculateRow(this)"></td>
+                        <td><input type="text" placeholder="0.00" class="table-input auto-adjust amount" readonly></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="totals-section">
+            <table class="totals-table">
+                <tr>
+                    <td>SUBTOTAL:</td>
+                    <td><span class="currency-label">MXN $</span><input type="text" id="subtotal" value="0.00" readonly></td>
+                </tr>
+                <tr>
+                    <td>IVA (16%):</td>
+                    <td><span class="currency-label">MXN $</span><input type="text" id="iva" value="0.00" readonly></td>
+                </tr>
+                <tr>
+                    <td>TOTAL:</td>
+                    <td><span class="currency-label">MXN $</span><input type="text" id="total" value="0.00" readonly></td>
+                </tr>
+            </table>
+        </div>
+        
+        <div class="notes-section">
+            <div class="section-title">NOTAS, TÉRMINOS Y CONDICIONES</div>
+            <div class="terms-selector">
+                <select id="terms-select" onchange="updateTerms()">
+                    <option value="">Seleccionar términos y condiciones...</option>
+                    <option value="1">Términos Tipo 1 - Condiciones estándar</option>
+                    <option value="2">Términos Tipo 2 - Condiciones con crédito</option>
+                    <option value="3">Términos Tipo 3 - Combinados</option>
+                </select>
+            </div>
+            <textarea id="notes" placeholder="Los términos y condiciones aparecerán aquí al seleccionar una opción..." class="auto-adjust"></textarea>
+        </div>
+        
+        <div class="signature-section">
+            <div class="signature-box">
+                <div class="signature-line">
+                    Gerente de Ventas<br>
+                    Home Support Electric
+                </div>
+            </div>
+        </div>
+        
+        <div class="dates-section">
+            <div class="date-field">
+                <div class="info-label">Fecha de Emisión:</div>
+                <input type="date" id="issue-date" class="auto-adjust">
+            </div>
+            <div class="date-field">
+                <div class="info-label">Válido hasta:</div>
+                <input type="date" id="valid-until" class="auto-adjust">
+            </div>
+        </div>
+    </div>
+
+    <div class="global-actions">
+        <button class="print-button" onclick="window.print()">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
+                <path d="M5 1a2 2 0 0 0-2 2v1h10V3a2 2 0 0 0-2-2H5zm6 8H5a1 1 0 0 0-1 1v3a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-3a1 1 0 0 0-1-1z"/>
+                <path d="M0 7a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2h-1v-2a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v2H2a2 2 0 0 1-2-2V7zm2.5 1a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1z"/>
+            </svg>
+            Imprimir / PDF
+        </button>
+        <button class="export-button" onclick="exportToExcel()">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
+                <path d="M5.884 6.68a.5.5 0 0 0-.772.63L8 11.154l2.888-3.844a.5.5 0 0 0-.772-.63L8 9.846 5.884 6.68z"/>
+                <path d="M14 4.5V14a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h5.5L14 4.5zm-3 0A1.5 1.5 0 0 1 9.5 3V1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V4.5h-2z"/>
+            </svg>
+            Exportar a Excel
+        </button>
+        <button class="whatsapp-button" onclick="sendWhatsApp()">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
+                <path d="M13.601 2.326A7.854 7.854 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.933 7.933 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.898 7.898 0 0 0 13.6 2.326zM7.994 14.521a6.573 6.573 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.557 6.557 0 0 1 1.928 4.66c-.004 3.639-2.961 6.592-6.592 6.592zm3.615-4.934c-.197-.099-1.17-.578-1.353-.646-.182-.065-.315-.099-.445.099-.133.197-.513.646-.627.775-.114.133-.232.148-.43.05-.197-.1-.836-.308-1.592-.985-.59-.525-.985-1.175-1.103-1.372-.114-.198-.011-.304.088-.403.087-.088.197-.232.296-.346.1-.114.133-.198.198-.33.065-.134.034-.248-.015-.347-.05-.099-.445-1.076-.612-1.47-.16-.389-.323-.335-.445-.34-.114-.007-.247-.007-.38-.007a.729.729 0 0 0-.529.247c-.182.198-.691.677-.691 1.654 0 .977.71 1.916.81 2.049.1.133 1.394 2.132 3.383 2.992.47.205.84.326 1.129.418.475.152.904.129 1.246.08.38-.058 1.171-.48 1.338-.943.164-.464.164-.86.114-.943-.05-.084-.182-.133-.38-.232z"/>
+            </svg>
+            Enviar por WhatsApp
+        </button>
+    </div>
+
+    <script>
+        // Establecer fecha de emisión como hoy
+        document.getElementById('issue-date').valueAsDate = new Date();
+        
+        // Establecer fecha de vencimiento como 30 días a partir de hoy
+        const validUntil = new Date();
+        validUntil.setDate(validUntil.getDate() + 30);
+        document.getElementById('valid-until').valueAsDate = validUntil;
+
+        // Definir términos y condiciones
+        const termsOptions = {
+            '1': `• Los precios son en pesos mexicanos, sujetos a cambio sin previo aviso.
+• Los tiempos de entrega son salvo previa venta; en caso de que al recibir su orden ya no se tenga el material, se le informará de inmediato.
+• Los precios son L.A.B. en Guadalajara.
+• La fecha de entrega es la correspondiente en cada descripción.
+• Se requiere el 50% de anticipo y 50% contra aviso de disponibilidad.
+• Depositar el anticipo a nombre de José de Jesús Rubio Castro a la cuenta de BBVA 012320001643356192.
+• Condiciones de crédito: 20 días.`,
+
+            '2': `• Condiciones de crédito: 20 días naturales desde la fecha de factura.
+• Requiere aprobación crediticia previa.
+• Documentos: copia de RFC, acta constitutiva y estado de cuenta bancario.`,
+
+            '3': `• Los precios son en pesos mexicanos, sujetos a cambio sin previo aviso.
+• Los tiempos de entrega son salvo previa venta; en caso de que al recibir su orden ya no se tenga el material, se le informará de inmediato.
+• Los precios son L.A.B. en Guadalajara.
+• La fecha de entrega es la correspondiente en cada descripción.
+• Se requiere el 50% de anticipo y 50% contra aviso de disponibilidad.
+• Depositar el anticipo a nombre de José de Jesús Rubio Castro a la cuenta de BBVA 012320001643356192.
+• Condiciones de crédito: 20 días naturales desde la fecha de factura.
+• Requiere aprobación crediticia previa.
+• Documentos: copia de RFC, acta constitutiva y estado de cuenta bancario.`
+        };
+
+        // Función para actualizar términos y condiciones
+        function updateTerms() {
+            const select = document.getElementById('terms-select');
+            const notes = document.getElementById('notes');
+            const selectedValue = select.value;
+            
+            if (selectedValue && termsOptions[selectedValue]) {
+                notes.value = termsOptions[selectedValue];
+            } else {
+                notes.value = '';
+            }
+        }
+        
+        // Función para enviar por WhatsApp
+        function sendWhatsApp() {
+            const clientName = document.getElementById('client-name').value || 'Cliente';
+            const clientPhone = document.getElementById('client-phone').value || '';
+            const total = document.getElementById('total').value || '0.00';
+            const issueDate = document.getElementById('issue-date').value;
+            const validUntil = document.getElementById('valid-until').value;
+            
+            // Construir mensaje
+            let message = `¡Hola ${clientName}! 👋\n\n`;
+            message += `Te envío la cotización de *Home Support Electric*\n\n`;
+            message += `*Total: MXN $${total}*\n`;
+            message += `*Fecha de emisión:* ${issueDate}\n`;
+            message += `*Válido hasta:* ${validUntil}\n\n`;
+            message += `Para más detalles, revisa el documento adjunto.`;
+            message += `\n\n¡Quedamos atentos a tus comentarios!`;
+            
+            // Codificar mensaje para URL
+            const encodedMessage = encodeURIComponent(message);
+            
+            // Crear URL de WhatsApp
+            let whatsappUrl = `https://wa.me/`;
+            
+            // Si hay número de teléfono, agregarlo
+            if (clientPhone) {
+                // Limpiar número (quitar espacios, guiones, etc.)
+                const cleanPhone = clientPhone.replace(/\D/g, '');
+                whatsappUrl += `${cleanPhone}?text=${encodedMessage}`;
+            } else {
+                // Si no hay número, abrir WhatsApp sin número específico
+                whatsappUrl += `?text=${encodedMessage}`;
+            }
+            
+            // Abrir WhatsApp
+            window.open(whatsappUrl, '_blank');
+        }
+        
+        // Función para renumerar todos los items
+        function renumberItems() {
+            const rows = document.querySelectorAll('#table-body tr');
+            rows.forEach((row, index) => {
+                const itemCell = row.querySelector('.item-number');
+                if (itemCell) {
+                    itemCell.textContent = (index + 1);
+                }
+            });
+        }
+        
+        // Función para calcular el importe de una fila
+        function calculateRow(input) {
+            const row = input.closest('tr');
+            const quantity = parseFloat(row.querySelector('.quantity').value) || 0;
+            const unitPrice = parseFloat(row.querySelector('.unit-price').value) || 0;
+            const amount = quantity * unitPrice;
+            
+            row.querySelector('.amount').value = amount.toFixed(2);
+            
+            // Recalcular totales
+            calculateTotals();
+        }
+        
+        // Función para calcular subtotal, IVA y total
+        function calculateTotals() {
+            let subtotal = 0;
+            const amounts = document.querySelectorAll('.amount');
+            
+            amounts.forEach(input => {
+                subtotal += parseFloat(input.value) || 0;
+            });
+            
+            const iva = subtotal * 0.16;
+            const total = subtotal + iva;
+            
+            document.getElementById('subtotal').value = subtotal.toFixed(2);
+            document.getElementById('iva').value = iva.toFixed(2);
+            document.getElementById('total').value = total.toFixed(2);
+        }
+        
+        // Función para agregar filas a la tabla
+        function addRow() {
+            const tableBody = document.getElementById('table-body');
+            const newRow = tableBody.insertRow();
+            
+            // Agregar celdas con campos de entrada
+            newRow.innerHTML = `
+                <td class="delete-cell">
+                    <button class="delete-btn" onclick="deleteRow(this)">×</button>
+                </td>
+                <td class="item-cell">
+                    <div class="item-number">${tableBody.rows.length + 1}</div>
+                </td>
+                <td><input type="number" min="0" step="1" placeholder="Cant" class="table-input auto-adjust quantity" oninput="calculateRow(this)"></td>
+                <td class="unit-cell">
+                    <input type="text" value="pza" class="table-input auto-adjust">
+                </td>
+                <td class="description-cell"><textarea placeholder="Descripción del producto o servicio" class="auto-adjust"></textarea></td>
+                <td><input type="number" min="0" step="0.01" placeholder="0.00" class="table-input auto-adjust unit-price" oninput="calculateRow(this)"></td>
+                <td><input type="text" placeholder="0.00" class="table-input auto-adjust amount" readonly></td>
+            `;
+        }
+        
+        // Función para eliminar una fila específica
+        function deleteRow(button) {
+            const row = button.closest('tr');
+            row.remove();
+            renumberItems();
+            calculateTotals();
+        }
+        
+        // Función para eliminar la última fila
+        function deleteLastRow() {
+            const tableBody = document.getElementById('table-body');
+            const rows = tableBody.getElementsByTagName('tr');
+            
+            if (rows.length > 1) { // Mantener al menos una fila
+                tableBody.deleteRow(rows.length - 1);
+                renumberItems();
+                calculateTotals();
+            }
+        }
+        
+        // Función para exportar a Excel
+        function exportToExcel() {
+            // Crear un nuevo libro de trabajo
+            const wb = XLSX.utils.book_new();
+            
+            // Preparar datos para la hoja de cálculo
+            const data = [];
+            
+            // Agregar información de la empresa
+            data.push(['HOME SUPPORT ELECTRIC']);
+            data.push(['Materiales Eléctricos Residenciales y Comerciales']);
+            data.push([]);
+            data.push(['COTIZACIÓN', '', '', '', '', '', 'N° C-2023-001']);
+            data.push([]);
+            
+            // Información de la empresa
+            data.push(['INFORMACIÓN DE LA EMPRESA', '', '', 'INFORMACIÓN DEL CLIENTE']);
+            data.push(['RFC:', 'RUCJ810917N71', '', 'CLIENTE:', document.getElementById('client-name').value]);
+            data.push(['Dirección:', 'Vista a la Catedral 3001, Cal. Míndico, CP. 45608', '', 'CONTACTO:', document.getElementById('contact-person').value]);
+            data.push(['Teléfono y WhatsApp:', '33 1295 8108', '', 'TELÉFONO:', document.getElementById('client-phone').value]);
+            data.push(['Sitio web:', 'www.homesupportelectric.com', '', 'CORREO:', document.getElementById('client-email').value]);
+            data.push([]);
+            
+            // Encabezados de la tabla de productos
+            data.push(['Item', 'Cantidad', 'Unidad', 'Descripción', 'Precio Unitario (MXN)', 'Importe (MXN)']);
+            
+            // Datos de productos
+            const rows = document.querySelectorAll('#table-body tr');
+            rows.forEach(row => {
+                const item = row.querySelector('.item-number').textContent || '';
+                const quantity = row.cells[2].querySelector('input').value || '';
+                const unit = row.cells[3].querySelector('input').value || '';
+                const description = row.cells[4].querySelector('textarea').value || '';
+                const unitPrice = row.cells[5].querySelector('input').value || '';
+                const amount = row.cells[6].querySelector('input').value || '';
+                
+                if (quantity || unit || description || unitPrice || amount) {
+                    data.push([item, quantity, unit, description, unitPrice, amount]);
+                }
+            });
+            
+            data.push([]);
+            
+            // Totales
+            data.push(['', '', '', '', 'SUBTOTAL (MXN):', 'MXN $' + document.getElementById('subtotal').value]);
+            data.push(['', '', '', '', 'IVA (16%) (MXN):', 'MXN $' + document.getElementById('iva').value]);
+            data.push(['', '', '', '', 'TOTAL (MXN):', 'MXN $' + document.getElementById('total').value]);
+            
+            data.push([]);
+            
+            // Notas y fechas
+            data.push(['NOTAS, TÉRMINOS Y CONDICIONES:']);
+            data.push([document.getElementById('notes').value]);
+            data.push([]);
+            data.push(['Fecha de Emisión:', document.getElementById('issue-date').value, '', 'Válido hasta:', document.getElementById('valid-until').value]);
+            data.push([]);
+            data.push(['Gerente de Ventas']);
+            data.push(['Home Support Electric']);
+            
+            // Crear hoja de cálculo
+            const ws = XLSX.utils.aoa_to_sheet(data);
+            
+            // Añadir la hoja al libro
+            XLSX.utils.book_append_sheet(wb, ws, "Cotización");
+            
+            // Generar archivo Excel
+            const fileName = `Cotización_Home_Support_Electric_${new Date().toISOString().split('T')[0]}.xlsx`;
+            XLSX.writeFile(wb, fileName);
+        }
+        
+        // Autoajustar campos al cargar la página
+        document.addEventListener('DOMContentLoaded', function() {
+            // Inicializar todos los campos con valores por defecto
+            const quantities = document.querySelectorAll('.quantity');
+            const unitPrices = document.querySelectorAll('.unit-price');
+            
+            quantities.forEach(q => q.value = '');
+            unitPrices.forEach(p => p.value = '');
+            
+            // Calcular totales iniciales
+            calculateTotals();
+        });
+    </script>
+</body>
+</html>
